@@ -1,8 +1,8 @@
 package freesurfer
 
-import (
-	"math"
-	"math/rand"
+import "fmt"
 
-	"github.com/dfsp-spirit/neurogo/common/io"
-)
+func main() {
+	fmt.Println("hello world")
+}
+
