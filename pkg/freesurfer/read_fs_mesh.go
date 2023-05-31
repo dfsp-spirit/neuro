@@ -1,4 +1,4 @@
-package freesurfer
+package neurogo
 
 // Related packages and documentation:
 // https://pkg.go.dev/github.com/oschwald/maxminddb-golang#example-Reader.Lookup-Interface
@@ -59,8 +59,8 @@ func read_fs_mesh(filepath string) {
 	fmt.Println(header_part1.magic_b2)
 	fmt.Println(header_part1.magic_b3)
 
-	var string created_line = common.read_newline_terminated_string(r);
-    var string comment_line = common.read_newline_terminated_string(r);
+	createdLine, err := common.readNewlineTerminatedString(r);
+    commentLine, err := common.readNewlineTerminatedString(r);
 
 	var header_part2 struct {
 		num_verts int32

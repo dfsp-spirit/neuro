@@ -14,7 +14,7 @@ var (
 
 func init() {
     meshfile = flag.String("meshfile", "lh.white", "The mesh file to read, in FreeSurfer curv format.")
-    verbosity = flag.Int("verbosity", 0, "Verbosity level, from 0 = silent to 3 = debug.")
+    verbosity = flag.Int("verbosity", 1, "Verbosity level, from 0 = silent to 3 = debug.")
 }
 
 func main() {
