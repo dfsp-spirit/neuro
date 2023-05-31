@@ -16,6 +16,11 @@ import (
 	"os"
 )
 
+func readNewlineTerminatedString(r *bytes.Reader) (string, error) {
+	fmt.Println("Hissssss")
+	return "Hissssss", nil
+}
+
 func read_fs_mesh(filepath string) {
 	//b := []byte{0x18, 0x2d, 0x44, 0x54, 0xfb, 0x21, 0x09, 0x40, 0xff, 0x01, 0x02, 0x03, 0xbe, 0xef}
 	//r := bytes.NewReader(b)
@@ -59,8 +64,11 @@ func read_fs_mesh(filepath string) {
 	fmt.Println(header_part1.magic_b2)
 	fmt.Println(header_part1.magic_b3)
 
-	createdLine, err := common.readNewlineTerminatedString(r);
-    commentLine, err := common.readNewlineTerminatedString(r);
+	createdLine, err := readNewlineTerminatedString(r);
+    commentLine, err := readNewlineTerminatedString(r);
+
+	fmt.Println(createdLine)
+	fmt.Println(commentLine)
 
 	var header_part2 struct {
 		num_verts int32
