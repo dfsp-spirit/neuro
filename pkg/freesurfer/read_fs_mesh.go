@@ -1,7 +1,11 @@
 package freesurfer
 
+// Related packages and documentation:
 // https://pkg.go.dev/github.com/oschwald/maxminddb-golang#example-Reader.Lookup-Interface
 // https://pkg.go.dev/encoding/binary#example-Read-Multi
+// maybe https://www.jonathan-petitcolas.com/2014/09/25/parsing-binary-files-in-go.html, but it's old
+//
+// https://github.com/dfsp-spirit/libfs/blob/main/include/libfs.h#L2023 for the fs surface file format
 
 import (
 	"bufio"
