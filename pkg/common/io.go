@@ -1,8 +1,12 @@
 package common
 
-import "fmt"
+import (
+	"bytes"
+	"fmt"
+)
 
 //this is just func
-func TestingHello(){
+func read_newline_terminated_string(r bytes.Reader) (string, error) {
 	fmt.Println("Hissssss")
+	return "Hissssss", nil
 }
