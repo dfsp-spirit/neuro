@@ -21,7 +21,7 @@ func readNewlineTerminatedString(r *bytes.Reader) (string, error) {
 	return "Hissssss", nil
 }
 
-func read_fs_mesh(filepath string) {
+func readFreesurferMesh(filepath string) (error) {
 	//b := []byte{0x18, 0x2d, 0x44, 0x54, 0xfb, 0x21, 0x09, 0x40, 0xff, 0x01, 0x02, 0x03, 0xbe, 0xef}
 	//r := bytes.NewReader(b)
 
@@ -35,7 +35,7 @@ func read_fs_mesh(filepath string) {
 	stat, err := file.Stat()
 	if err != nil {
 	   fmt.Println(err)
-	   return
+	   return err
 	}
 
 	// Read the file into a byte slice
@@ -43,7 +43,7 @@ func read_fs_mesh(filepath string) {
 	_, err = bufio.NewReader(file).Read(bs)
 	if err != nil && err != io.EOF {
 	   fmt.Println(err)
-	   return
+	   return err
 	}
 
 	// Read the byte slice
@@ -58,6 +58,7 @@ func read_fs_mesh(filepath string) {
 
 	if err := binary.Read(r, binary.LittleEndian, &header_part1); err != nil {
 		fmt.Println("binary.Read failed on first part of fs surface header:", err)
+		return err
 	}
 
 	fmt.Println(header_part1.magic_b1)
@@ -77,8 +78,10 @@ func read_fs_mesh(filepath string) {
 
 	if err := binary.Read(r, binary.LittleEndian, &header_part2); err != nil {
 		fmt.Println("binary.Read failed on second part of fs surface header:", err)
+		return err
 	}
 
 	fmt.Println(header_part2.num_verts)
 	fmt.Println(header_part2.num_faces)
+	return nil
 }
