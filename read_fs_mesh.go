@@ -31,6 +31,8 @@ func readFreesurferMesh(filepath string) (error) {
 	//b := []byte{0x18, 0x2d, 0x44, 0x54, 0xfb, 0x21, 0x09, 0x40, 0xff, 0x01, 0x02, 0x03, 0xbe, 0xef}
 	//r := bytes.NewReader(b)
 
+	endian := binary.LittleEndian
+
 	file, err := os.Open(filepath)
 	if err != nil {
    		panic(err)
@@ -69,7 +71,7 @@ func readFreesurferMesh(filepath string) (error) {
 	int1 := _magicByte3ToInt(magic)
 	fmt.Printf("Header magic bytes %d %d %d gives: %d.\n", header_part1.magic_b1, header_part1.magic_b2, header_part1.magic_b3, int1)
 
-	if err := binary.Read(r, binary.LittleEndian, &header_part1); err != nil {
+	if err := binary.Read(r, endian, &header_part1); err != nil {
 		fmt.Println("binary.Read failed on first part of fs surface header:", err)
 		return err
 	}
@@ -89,7 +91,7 @@ func readFreesurferMesh(filepath string) (error) {
 		num_faces int32
 	}
 
-	if err := binary.Read(r, binary.LittleEndian, &header_part2); err != nil {
+	if err := binary.Read(r, endian, &header_part2); err != nil {
 		fmt.Println("binary.Read failed on second part of fs surface header:", err)
 		return err
 	}
