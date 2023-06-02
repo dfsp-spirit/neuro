@@ -1,6 +1,6 @@
 
 build:
-	go build -o bin/neurogo_example example_neurogo.go
+	go build -o bin/neurogo_example read_fs_mesh.go example_neurogo.go
 
 run:
 	go run example_neurogo.go
