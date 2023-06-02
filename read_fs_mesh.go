@@ -14,11 +14,17 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strconv"
 )
 
 func readNewlineTerminatedString(r *bytes.Reader) (string, error) {
 	fmt.Println("Hissssss")
 	return "Hissssss", nil
+}
+
+func _magicByte3ToInt(magic []byte) (int) {
+	int1, _ := strconv.Atoi(string(magic))
+	return int1
 }
 
 func readFreesurferMesh(filepath string) (error) {
@@ -55,6 +61,13 @@ func readFreesurferMesh(filepath string) (error) {
 		magic_b3 uint8
 		//Mine [3]byte
 	}
+
+	magic := make([]byte, 3)
+	magic[0] = header_part1.magic_b1
+	magic[1] = header_part1.magic_b1
+	magic[2] = header_part1.magic_b1
+	int1 := _magicByte3ToInt(magic)
+	fmt.Printf("Header magic bytes %d %d %d gives: %d.\n", header_part1.magic_b1, header_part1.magic_b2, header_part1.magic_b3, int1)
 
 	if err := binary.Read(r, binary.LittleEndian, &header_part1); err != nil {
 		fmt.Println("binary.Read failed on first part of fs surface header:", err)
