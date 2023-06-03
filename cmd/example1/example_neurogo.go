@@ -24,26 +24,28 @@ func init() {
 
 func main() {
 
+	apptag := "[EX1] "
+
     flag.Parse()
 	fmt.Println("=====[ Neuro Example 1: Read a FreeSurfer mesh file ]=====")
 
 	if *verbosity > 0 {
-    	fmt.Println("meshfile:", meshfile)
-    	fmt.Println("verbosity:", *verbosity)
+    	fmt.Println(apptag, "meshfile:", meshfile)
+    	fmt.Println(apptag, "verbosity:", *verbosity)
 	}
 
 	if _, err := os.Stat(meshfile); err != nil {
-		fmt.Printf("Could not stat file '%s': '%s', exiting.\n.", meshfile, err)
+		fmt.Printf("%sCould not stat file '%s': '%s', exiting.\n.", apptag, meshfile, err)
 		return
 	}
 
 	mesh, err := neurogo.ReadFreesurferMesh(meshfile)
 	if err != nil {
-		fmt.Printf("Failed to read mesh from file '%s': %s\n", meshfile, err)
+		fmt.Printf("%sFailed to read mesh from file '%s': '%s'.\n", apptag, meshfile, err)
 		return
 	}
 
 	if *verbosity > 0 {
-    	fmt.Printf("Read mesh with %d vertices and %d faces from meshfile '%s'.\n", len(mesh.Vertices), len(mesh.Faces), meshfile)
+    	fmt.Printf(apptag, "Read mesh with %d vertices and %d faces from meshfile '%s'.\n", len(mesh.Vertices), len(mesh.Faces), meshfile)
 	}
 }
