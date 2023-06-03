@@ -16,7 +16,7 @@ go build cmd/example1/example_neurogo.go
 Then run it:
 
 ```shell
-./example_neurogo --meshfile examples/lh.white
+./example_neurogo --meshfile data/lh.white
 ```
 
 ### If you have `make`
