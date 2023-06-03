@@ -42,7 +42,8 @@ func readNewlineTerminatedString(r *bytes.Reader) (string, error) {
 }
 
 func _magicByte3ToInt(magic []byte) (int) {
-	int1, _ := strconv.Atoi(string(magic))
+	int1, _ := strconv.Atoi(string(magic[:])) // FIXME: incorrect
+	int1 = ((int1 >> 8) & 0xffffff);
 	return int1
 }
 
