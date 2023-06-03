@@ -25,6 +25,7 @@ func init() {
 func main() {
 
     flag.Parse()
+	fmt.Println("=====[ Neuro Example 1: Read a FreeSurfer mesh file ]=====")
 
 	if *verbosity > 0 {
     	fmt.Println("meshfile:", meshfile)
@@ -32,17 +33,17 @@ func main() {
 	}
 
 	if _, err := os.Stat(meshfile); err != nil {
-		fmt.Printf("Could not stat file '%s', file does not exist or is not readable, exiting.\n.", meshfile)
+		fmt.Printf("Could not stat file '%s': '%s', exiting.\n.", meshfile, err)
 		return
 	}
 
-	err = neurogo.ReadFreesurferMesh(meshfile)
+	mesh, err := neurogo.ReadFreesurferMesh(meshfile)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Printf("Failed to read mesh from file '%s': %s\n", meshfile, err)
 		return
 	}
 
 	if *verbosity > 0 {
-    	fmt.Println("Mesh read from meshfile:", meshfile)
+    	fmt.Printf("Read mesh with %d vertices and %d faces from meshfile '%s'.\n", len(mesh.Vertices), len(mesh.Faces), meshfile)
 	}
 }
