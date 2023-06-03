@@ -27,7 +27,7 @@ func _magicByte3ToInt(magic []byte) (int) {
 	return int1
 }
 
-func readFreesurferMesh(filepath string) (error) {
+func ReadFreesurferMesh(filepath string) (error) {
 	//b := []byte{0x18, 0x2d, 0x44, 0x54, 0xfb, 0x21, 0x09, 0x40, 0xff, 0x01, 0x02, 0x03, 0xbe, 0xef}
 	//r := bytes.NewReader(b)
 

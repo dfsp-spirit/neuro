@@ -1,10 +1,12 @@
 // Demo application for the neurogo package. Reads a FreeSurfer mesh and prints basic mesh properties.
 
-package neurogo
+package main
 
 import (
 	"flag"
 	"fmt"
+
+	"github.com/dfsp-spirit/neurogo"
 )
 
 var (
@@ -28,7 +30,11 @@ func main() {
     	fmt.Println("verbosity:", *verbosity)
 	}
 
-	err = readFreesurferMesh(*meshfile)
+	err = neurogo.ReadFreesurferMesh(*meshfile)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 
 	if *verbosity > 0 {
     	fmt.Println("Mesh read from meshfile:", *meshfile)
