@@ -20,8 +20,25 @@ import (
 // Verbosity is the verbosity level of the package. 0 = silent, 1 = info, 2 = debug.
 var Verbosity int = 1
 
+// Read a newline-terminated string from a bytes.Reader.
 func readNewlineTerminatedString(r *bytes.Reader) (string, error) {
-	return "not implemented yet", nil
+
+	endian := binary.BigEndian // TODO: make this a parameter
+
+	//return "not implemented yet", nil
+	var line string = ""
+	char := make([]byte, 1)
+	var char_num int = 0
+	for string(char[:]) != "\n" {
+		if err := binary.Read(r, endian, &char); err != nil {
+			fmt.Printf("binary.Read failed on character %d of newline-terminated string: %s\n", char_num, err)
+			return "", err
+		} else {
+			line = line + string(char[:])
+		}
+		char_num++
+	}
+	return line, nil
 }
 
 func _magicByte3ToInt(magic []byte) (int) {
