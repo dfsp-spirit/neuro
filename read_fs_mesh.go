@@ -17,9 +17,11 @@ import (
 	"strconv"
 )
 
+// Verbosity is the verbosity level of the package. 0 = silent, 1 = info, 2 = debug.
+var Verbosity int = 1
+
 func readNewlineTerminatedString(r *bytes.Reader) (string, error) {
-	fmt.Println("Hissssss")
-	return "Hissssss", nil
+	return "not implemented yet", nil
 }
 
 func _magicByte3ToInt(magic []byte) (int) {
@@ -38,7 +40,7 @@ func ReadFreesurferMesh(filepath string) (Mesh, error) {
 	//b := []byte{0x18, 0x2d, 0x44, 0x54, 0xfb, 0x21, 0x09, 0x40, 0xff, 0x01, 0x02, 0x03, 0xbe, 0xef}
 	//r := bytes.NewReader(b)
 
-	endian := binary.LittleEndian
+	endian := binary.BigEndian
 	surface := Mesh{}
 
 	if _, err := os.Stat(filepath); err != nil {
@@ -71,40 +73,45 @@ func ReadFreesurferMesh(filepath string) (Mesh, error) {
 	r := bytes.NewReader(bs)
 
 	type header_part1 struct {
-		magic_b1 uint8
-		magic_b2 uint8
-		magic_b3 uint8
+		Magic_b1 uint8
+		Magic_b2 uint8
+		Magic_b3 uint8
 		//Mine [3]byte
 	}
 
 	hdr1 := header_part1{}
 
 
-	if err := binary.Read(r, endian, hdr1); err != nil {
+	if err := binary.Read(r, endian, &hdr1); err != nil {
 		fmt.Println("binary.Read failed on first part of fs surface header:", err)
 		return surface, err
 	}
 
-	fmt.Println(hdr1.magic_b1)
-	fmt.Println(hdr1.magic_b2)
-	fmt.Println(hdr1.magic_b3)
+
+	if Verbosity > 0 {
+		fmt.Println("hdr1.Magic_b1:", hdr1.Magic_b1)
+		fmt.Println("hdr1.Magic_b2:", hdr1.Magic_b2)
+		fmt.Println("hdr1.Magic_b3:", hdr1.Magic_b3)
+	}
 
 	magic := make([]byte, 3)
-	magic[0] = hdr1.magic_b1
-	magic[1] = hdr1.magic_b2
-	magic[2] = hdr1.magic_b3
+	magic[0] = hdr1.Magic_b1
+	magic[1] = hdr1.Magic_b2
+	magic[2] = hdr1.Magic_b3
 	int1 := _magicByte3ToInt(magic)
-	fmt.Printf("Header magic bytes %d %d %d gives: %d.\n", hdr1.magic_b1, hdr1.magic_b2, hdr1.magic_b3, int1)
+	fmt.Printf("Header magic bytes %d %d %d gives: %d.\n", hdr1.Magic_b1, hdr1.Magic_b2, hdr1.Magic_b3, int1)
 
 	createdLine, err := readNewlineTerminatedString(r);
     commentLine, err := readNewlineTerminatedString(r);
 
-	fmt.Println(createdLine)
-	fmt.Println(commentLine)
+	if Verbosity > 0 {
+		fmt.Println("createdLine:", createdLine)
+		fmt.Println("commentLine:", commentLine)
+	}
 
 	type header_part2 struct {
-		num_verts int32
-		num_faces int32
+		Num_verts int32
+		Num_faces int32
 	}
 
 	hdr2 := header_part2{}
@@ -114,7 +121,9 @@ func ReadFreesurferMesh(filepath string) (Mesh, error) {
 		return surface, err
 	}
 
-	fmt.Println(hdr2.num_verts)
-	fmt.Println(hdr2.num_faces)
+	if Verbosity > 0 {
+	fmt.Println("Num_verts:", hdr2.Num_verts)
+	fmt.Println("Num_faces:", hdr2.Num_faces)
+	}
 	return surface, nil
 }

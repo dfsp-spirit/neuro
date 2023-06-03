@@ -19,12 +19,13 @@ var (
 
 func init() {
     flag.StringVar(&meshfile, "meshfile", "lh.white", "The mesh file to read, in FreeSurfer curv format.")
-    verbosity = flag.Int("verbosity", 1, "Verbosity level, from 0 = silent to 3 = debug.")
+    verbosity = flag.Int("verbosity", 1, "Verbosity level: 0 = silent, 1 = info, 2 = debug.")
 }
 
 func main() {
 
 	apptag := "[EX1] "
+	neurogo.Verbosity = *verbosity
 
     flag.Parse()
 	fmt.Println("=====[ Neuro Example 1: Read a FreeSurfer mesh file ]=====")
@@ -46,6 +47,6 @@ func main() {
 	}
 
 	if *verbosity > 0 {
-    	fmt.Printf(apptag, "Read mesh with %d vertices and %d faces from meshfile '%s'.\n", len(mesh.Vertices), len(mesh.Faces), meshfile)
+    	fmt.Printf("%sRead mesh with %d vertices and %d faces from meshfile '%s'.\n", apptag, len(mesh.Vertices), len(mesh.Faces), meshfile)
 	}
 }
