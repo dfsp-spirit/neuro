@@ -3,7 +3,7 @@ build:
 	go build -o bin/neurogo_example cmd/example1/example_neurogo.go
 
 run:
-	go run cmd/example1/example_neurogo.go --meshfile data/lh.white --exportply lhwhite.ply
+	go run cmd/example1/example_neurogo.go --meshfile data/lh.white --exportply lhwhite.ply --exportobj lhwhite.obj --exportstl lhwhite.stl
 
 
 compile:
