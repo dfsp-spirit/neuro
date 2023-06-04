@@ -3,6 +3,7 @@ package neurogo
 import (
 	"fmt"
 	"math"
+	"strings"
 )
 
 // Mesh is a struct that holds a mesh, with vertices and faces.
@@ -120,45 +121,52 @@ func MeshStats(mesh Mesh) (map[string]float32, error) {
 
 // Convert a mesh to PLY format.
 func ToPlyFormat (mesh Mesh) (string, error) {
-	ply := "ply\n"
-	ply += "format ascii 1.0\n"
-	ply += "comment neurogo\n"
-	ply += fmt.Sprintf("element vertex %d\n", len(mesh.Vertices) / 3)
-	ply += "property float x\n"
-	ply += "property float y\n"
-	ply += "property float z\n"
-	ply += fmt.Sprintf("element face %d\n", len(mesh.Faces) / 3)
-	ply += "property list uchar int vertex_indices\n"
-	ply += "end_header\n"
+
+	if Verbosity >= 1 {
+		fmt.Printf("Generating PLY representation for mesh with %d vertices and %d faces.\n", len(mesh.Vertices) / 3, len(mesh.Faces) / 3)
+	}
+	var ply strings.Builder
+	ply.WriteString("ply\n")
+	ply.WriteString("format ascii 1.0\n")
+	ply.WriteString("comment neurogo\n")
+	ply.WriteString(fmt.Sprintf("element vertex %d\n", len(mesh.Vertices) / 3))
+	ply.WriteString("property float x\n")
+	ply.WriteString("property float y\n")
+	ply.WriteString("property float z\n")
+	ply.WriteString(fmt.Sprintf("element face %d\n", len(mesh.Faces) / 3))
+	ply.WriteString("property list uchar int vertex_indices\n")
+	ply.WriteString("end_header\n")
 
 	for i := 0; i < len(mesh.Vertices); i += 3 {
-		ply += fmt.Sprintf("%f %f %f\n", mesh.Vertices[i], mesh.Vertices[i+1], mesh.Vertices[i+2])
+		ply.WriteString(fmt.Sprintf("%f %f %f\n", mesh.Vertices[i], mesh.Vertices[i+1], mesh.Vertices[i+2]))
 	}
 
 	for i := 0; i < len(mesh.Faces); i += 3 {
-		ply += fmt.Sprintf("3 %d %d %d\n", mesh.Faces[i], mesh.Faces[i+1], mesh.Faces[i+2])
+		ply.WriteString(fmt.Sprintf("3 %d %d %d\n", mesh.Faces[i], mesh.Faces[i+1], mesh.Faces[i+2]))
 	}
 
-	return ply, nil
+	return ply.String(), nil
 }
 
 // Convert a mesh to OBJ format.
 func ToObjFormat (mesh Mesh) (string, error) {
-	obj := "# neurogo\n"
+	var obj strings.Builder
+	obj.WriteString("# neurogo\n")
 	for i := 0; i < len(mesh.Vertices); i += 3 {
-		obj += fmt.Sprintf("v %f %f %f\n", mesh.Vertices[i], mesh.Vertices[i+1], mesh.Vertices[i+2])
+		obj.WriteString(fmt.Sprintf("v %f %f %f\n", mesh.Vertices[i], mesh.Vertices[i+1], mesh.Vertices[i+2]))
 	}
 
 	for i := 0; i < len(mesh.Faces); i += 3 {
-		obj += fmt.Sprintf("f %d %d %d\n", mesh.Faces[i]+1, mesh.Faces[i+1]+1, mesh.Faces[i+2]+1)
+		obj.WriteString(fmt.Sprintf("f %d %d %d\n", mesh.Faces[i]+1, mesh.Faces[i+1]+1, mesh.Faces[i+2]+1))
 	}
 
-	return obj, nil
+	return obj.String(), nil
 }
 
 // Convert a mesh to STL format.
 func ToStlFormat (mesh Mesh) (string, error) {
-	stl := "solid neurogo\n"
+	var stl strings.Builder
+	stl.WriteString("solid neurogo\n")
 	for i := 0; i < len(mesh.Faces); i += 3 {
 		// compute face normal
 		// edge 1
@@ -179,17 +187,17 @@ func ToStlFormat (mesh Mesh) (string, error) {
 		norm_y /= norm_length
 		norm_z /= norm_length
 		// write face normal
-		stl += fmt.Sprintf("facet normal %f %f %f\n", norm_x, norm_y, norm_z)
-		stl += "outer loop\n"
+		stl.WriteString(fmt.Sprintf("facet normal %f %f %f\n", norm_x, norm_y, norm_z))
+		stl.WriteString("outer loop\n")
 		// write face vertices
-		stl += fmt.Sprintf("vertex %f %f %f\n", mesh.Vertices[mesh.Faces[i]*3], mesh.Vertices[mesh.Faces[i]*3+1], mesh.Vertices[mesh.Faces[i]*3+2])
-		stl += fmt.Sprintf("vertex %f %f %f	\n", mesh.Vertices[mesh.Faces[i+1]*3], mesh.Vertices[mesh.Faces[i+1]*3+1], mesh.Vertices[mesh.Faces[i+1]*3+2])
-		stl += fmt.Sprintf("vertex %f %f %f\n", mesh.Vertices[mesh.Faces[i+2]*3], mesh.Vertices[mesh.Faces[i+2]*3+1], mesh.Vertices[mesh.Faces[i+2]*3+2])
-		stl += "endloop\n"
-		stl += "endfacet\n"
+		stl.WriteString(fmt.Sprintf("vertex %f %f %f\n", mesh.Vertices[mesh.Faces[i]*3], mesh.Vertices[mesh.Faces[i]*3+1], mesh.Vertices[mesh.Faces[i]*3+2]))
+		stl.WriteString(fmt.Sprintf("vertex %f %f %f	\n", mesh.Vertices[mesh.Faces[i+1]*3], mesh.Vertices[mesh.Faces[i+1]*3+1], mesh.Vertices[mesh.Faces[i+1]*3+2]))
+		stl.WriteString(fmt.Sprintf("vertex %f %f %f\n", mesh.Vertices[mesh.Faces[i+2]*3], mesh.Vertices[mesh.Faces[i+2]*3+1], mesh.Vertices[mesh.Faces[i+2]*3+2]))
+		stl.WriteString("endloop\n")
+		stl.WriteString("endfacet\n")
 	}
-	stl += "endsolid neurogo\n"
-	return stl, nil
+	stl.WriteString("endsolid neurogo\n")
+	return stl.String(), nil
 }
 
 // Export a mesh to a fine in the specified mesh file format.
@@ -209,7 +217,7 @@ func Export (mesh Mesh, filepath string, format string) (string, error) {
 		return mesh_rep, err
 	}
 	if err != nil {
-		return mesh_rep, nil
+		return mesh_rep, err
 	}
 	err = strToTextFile(mesh_rep, filepath)
 	return mesh_rep, err
