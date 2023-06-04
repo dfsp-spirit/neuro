@@ -14,7 +14,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"strconv"
 )
 
 // Read a newline-terminated string from a bytes.Reader.
@@ -40,11 +39,11 @@ func readNewlineTerminatedString(r *bytes.Reader, endian binary.ByteOrder, do_st
 	return line, nil
 }
 
-func _magicByte3ToInt(magic []byte) (int) {
-	int1, _ := strconv.Atoi(string(magic[:])) // FIXME: incorrect
-	int1 = ((int1 >> 8) & 0xffffff);
-	return int1
-}
+//func _magicByte3ToInt(magic []byte) (int) {
+//	int1, _ := strconv.Atoi(string(magic[:])) // FIXME: incorrect
+//	int1 = ((int1 >> 8) & 0xffffff);
+//	return int1
+//}
 
 
 // ReadFreesurferMesh reads a FreeSurfer mesh file and returns a Mesh struct.
@@ -106,12 +105,19 @@ func ReadFreesurferMesh(filepath string) (Mesh, error) {
 		fmt.Println("hdr1.Magic_b3:", hdr1.MagicB3)
 	}
 
-	magic := make([]byte, 3)
-	magic[0] = hdr1.MagicB1
-	magic[1] = hdr1.MagicB2
-	magic[2] = hdr1.MagicB3
-	int1 := _magicByte3ToInt(magic)
-	fmt.Printf("Header magic bytes %d %d %d gives: %d.\n", hdr1.MagicB1, hdr1.MagicB2, hdr1.MagicB3, int1)
+	if ! (hdr1.MagicB1 == 255 && hdr1.MagicB2 == 255 && hdr1.MagicB3 == 254) {
+		fmt.Println("Error: magic bytes are not 255 255 254, this is not a FreeSurfer surface file. Provide a recon-all output file like '<subject>/surf/lh.white'.")
+		return surface, err
+	}
+
+	//magic := make([]byte, 3)
+	//magic[0] = hdr1.MagicB1
+	//magic[1] = hdr1.MagicB2
+	//magic[2] = hdr1.MagicB3
+
+	if Verbosity > 0 {
+		fmt.Printf("Header magic bytes: %d %d %d.\n", hdr1.MagicB1, hdr1.MagicB2, hdr1.MagicB3)
+	}
 
 	createdLine, err := readNewlineTerminatedString(r, endian, true);
     commentLine, err := readNewlineTerminatedString(r, endian, true);

@@ -103,5 +103,6 @@ func MeshStats(mesh Mesh) (map[string]float32, error) {
 	stats["num_edges"] = float32(num_edges)
 	stats["avg_edge_length"] = avg_edge_length / float32(num_edges)
 	stats["avg_face_area"] = avg_face_area / float32(len(mesh.Faces) / 3)
+	stats["total_area"] = avg_face_area
 	return stats, nil
 }
