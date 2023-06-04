@@ -106,3 +106,77 @@ func MeshStats(mesh Mesh) (map[string]float32, error) {
 	stats["total_area"] = avg_face_area
 	return stats, nil
 }
+
+// Convert a mesh to PLY format.
+func ToPlyFormat (mesh Mesh) (string, error) {
+	ply := "ply\n"
+	ply += "format ascii 1.0\n"
+	ply += "comment neurogo\n"
+	ply += fmt.Sprintf("element vertex %d\n", len(mesh.Vertices) / 3)
+	ply += "property float x\n"
+	ply += "property float y\n"
+	ply += "property float z\n"
+	ply += fmt.Sprintf("element face %d\n", len(mesh.Faces) / 3)
+	ply += "property list uchar int vertex_indices\n"
+	ply += "end_header\n"
+
+	for i := 0; i < len(mesh.Vertices); i += 3 {
+		ply += fmt.Sprintf("%f %f %f\n", mesh.Vertices[i], mesh.Vertices[i+1], mesh.Vertices[i+2])
+	}
+
+	for i := 0; i < len(mesh.Faces); i += 3 {
+		ply += fmt.Sprintf("3 %d %d %d\n", mesh.Faces[i], mesh.Faces[i+1], mesh.Faces[i+2])
+	}
+
+	return ply, nil
+}
+
+// Convert a mesh to OBJ format.
+func ToObjFormat (mesh Mesh) (string, error) {
+	obj := "# neurogo\n"
+	for i := 0; i < len(mesh.Vertices); i += 3 {
+		obj += fmt.Sprintf("v %f %f %f\n", mesh.Vertices[i], mesh.Vertices[i+1], mesh.Vertices[i+2])
+	}
+
+	for i := 0; i < len(mesh.Faces); i += 3 {
+		obj += fmt.Sprintf("f %d %d %d\n", mesh.Faces[i]+1, mesh.Faces[i+1]+1, mesh.Faces[i+2]+1)
+	}
+
+	return obj, nil
+}
+
+// Convert a mesh to STL format.
+func ToStlFormat (mesh Mesh) (string, error) {
+	stl := "solid neurogo\n"
+	for i := 0; i < len(mesh.Faces); i += 3 {
+		// compute face normal
+		// edge 1
+		edge1_x := mesh.Vertices[mesh.Faces[i]*3] - mesh.Vertices[mesh.Faces[i+1]*3]
+		edge1_y := mesh.Vertices[mesh.Faces[i]*3+1] - mesh.Vertices[mesh.Faces[i+1]*3+1]
+		edge1_z := mesh.Vertices[mesh.Faces[i]*3+2] - mesh.Vertices[mesh.Faces[i+1]*3+2]
+		// edge 2
+		edge2_x := mesh.Vertices[mesh.Faces[i+1]*3] - mesh.Vertices[mesh.Faces[i+2]*3]
+		edge2_y := mesh.Vertices[mesh.Faces[i+1]*3+1] - mesh.Vertices[mesh.Faces[i+2]*3+1]
+		edge2_z := mesh.Vertices[mesh.Faces[i+1]*3+2] - mesh.Vertices[mesh.Faces[i+2]*3+2]
+		// cross product
+		norm_x := edge1_y * edge2_z - edge1_z * edge2_y
+		norm_y := edge1_z * edge2_x - edge1_x * edge2_z
+		norm_z := edge1_x * edge2_y - edge1_y * edge2_x
+		// normalize
+		norm_length := float32(math.Sqrt(float64(norm_x*norm_x + norm_y*norm_y + norm_z*norm_z)))
+		norm_x /= norm_length
+		norm_y /= norm_length
+		norm_z /= norm_length
+		// write face normal
+		stl += fmt.Sprintf("facet normal %f %f %f\n", norm_x, norm_y, norm_z)
+		stl += "outer loop\n"
+		// write face vertices
+		stl += fmt.Sprintf("vertex %f %f %f\n", mesh.Vertices[mesh.Faces[i]*3], mesh.Vertices[mesh.Faces[i]*3+1], mesh.Vertices[mesh.Faces[i]*3+2])
+		stl += fmt.Sprintf("vertex %f %f %f	\n", mesh.Vertices[mesh.Faces[i+1]*3], mesh.Vertices[mesh.Faces[i+1]*3+1], mesh.Vertices[mesh.Faces[i+1]*3+2])
+		stl += fmt.Sprintf("vertex %f %f %f\n", mesh.Vertices[mesh.Faces[i+2]*3], mesh.Vertices[mesh.Faces[i+2]*3+1], mesh.Vertices[mesh.Faces[i+2]*3+2])
+		stl += "endloop\n"
+		stl += "endfacet\n"
+	}
+	stl += "endsolid neurogo\n"
+	return stl, nil
+}
