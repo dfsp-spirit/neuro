@@ -1,5 +1,18 @@
 # neurogo
-work-in-progress test repository to try `golang`, ignore.
+Work-in-progress Go module to read structural neuroimaging file formats, ignore.
+
+This repo contains a very early version of a [Go](https://go.dev/) module for reading structural neuroimaging file formats. Currently supported formats include:
+
+* FreeSurfer brain surface format (a triangular mesh file format, used for recon-all output files like `<subject>/lh.white`)
+    - Export to PLY, STL, OBJ formats
+    - Computation of basic mesh properties (vertex and face count, bounding box, average edge length, total surface area, ...) 
+
+
+## Usage
+
+Not yet.
+
+The module is far from ready and has not been published yet, so you cannot `go get` it. All information below is developer information, i.e., intended for people who want to try the development version, typically to work on it.
 
 
 ## Building and running the demo app
