@@ -21,9 +21,9 @@ import (
 var Verbosity int = 1
 
 // Read a newline-terminated string from a bytes.Reader.
-func readNewlineTerminatedString(r *bytes.Reader) (string, error) {
+func readNewlineTerminatedString(r *bytes.Reader, endian binary.ByteOrder, do_strip_newline bool) (string, error) {
 
-	endian := binary.BigEndian // TODO: make this a parameter
+	//endian = binary.BigEndian // TODO: make this a parameter
 
 	//return "not implemented yet", nil
 	var line string = ""
@@ -34,7 +34,9 @@ func readNewlineTerminatedString(r *bytes.Reader) (string, error) {
 			fmt.Printf("binary.Read failed on character %d of newline-terminated string: %s\n", char_num, err)
 			return "", err
 		} else {
-			line = line + string(char[:])
+			if !(do_strip_newline && string(char[:]) == "\n") {
+				line = line + string(char[:])
+			}
 		}
 		char_num++
 	}
@@ -50,7 +52,7 @@ func _magicByte3ToInt(magic []byte) (int) {
 // Mesh is a struct that holds a mesh, with vertices and faces.
 type Mesh struct {
 	Vertices []float32
-	Faces []uint32
+	Faces []int32
 }
 
 // ReadFreesurferMesh reads a FreeSurfer mesh file and returns a Mesh struct.
@@ -91,9 +93,9 @@ func ReadFreesurferMesh(filepath string) (Mesh, error) {
 	r := bytes.NewReader(bs)
 
 	type header_part1 struct {
-		Magic_b1 uint8
-		Magic_b2 uint8
-		Magic_b3 uint8
+		MagicB1 uint8
+		MagicB2 uint8
+		MagicB3 uint8
 		//Mine [3]byte
 	}
 
@@ -107,29 +109,29 @@ func ReadFreesurferMesh(filepath string) (Mesh, error) {
 
 
 	if Verbosity > 0 {
-		fmt.Println("hdr1.Magic_b1:", hdr1.Magic_b1)
-		fmt.Println("hdr1.Magic_b2:", hdr1.Magic_b2)
-		fmt.Println("hdr1.Magic_b3:", hdr1.Magic_b3)
+		fmt.Println("hdr1.Magic_b1:", hdr1.MagicB1)
+		fmt.Println("hdr1.Magic_b2:", hdr1.MagicB2)
+		fmt.Println("hdr1.Magic_b3:", hdr1.MagicB3)
 	}
 
 	magic := make([]byte, 3)
-	magic[0] = hdr1.Magic_b1
-	magic[1] = hdr1.Magic_b2
-	magic[2] = hdr1.Magic_b3
+	magic[0] = hdr1.MagicB1
+	magic[1] = hdr1.MagicB2
+	magic[2] = hdr1.MagicB3
 	int1 := _magicByte3ToInt(magic)
-	fmt.Printf("Header magic bytes %d %d %d gives: %d.\n", hdr1.Magic_b1, hdr1.Magic_b2, hdr1.Magic_b3, int1)
+	fmt.Printf("Header magic bytes %d %d %d gives: %d.\n", hdr1.MagicB1, hdr1.MagicB2, hdr1.MagicB3, int1)
 
-	createdLine, err := readNewlineTerminatedString(r);
-    commentLine, err := readNewlineTerminatedString(r);
+	createdLine, err := readNewlineTerminatedString(r, endian, true);
+    commentLine, err := readNewlineTerminatedString(r, endian, true);
 
 	if Verbosity > 0 {
-		fmt.Println("createdLine:", createdLine)
-		fmt.Println("commentLine:", commentLine)
+		fmt.Printf("createdLine: '%s'\n", createdLine)
+		fmt.Printf("commentLine: '%s'\n", commentLine)
 	}
 
 	type header_part2 struct {
-		Num_verts int32
-		Num_faces int32
+		NumVerts int32
+		NumFaces int32
 	}
 
 	hdr2 := header_part2{}
@@ -140,8 +142,45 @@ func ReadFreesurferMesh(filepath string) (Mesh, error) {
 	}
 
 	if Verbosity > 0 {
-	fmt.Println("Num_verts:", hdr2.Num_verts)
-	fmt.Println("Num_faces:", hdr2.Num_faces)
+		fmt.Println("NumVerts:", hdr2.NumVerts)
+		fmt.Println("NumFaces:", hdr2.NumFaces)
 	}
+
+	// read mesh data
+	surface.Vertices = make([]float32, hdr2.NumVerts * 3) // x,y,z coordinates for each vertex
+	surface.Faces = make([]int32, hdr2.NumFaces * 3)  // vertex 1, 2, 3 for each face
+
+	// read vertices
+	if err := binary.Read(r, endian, &surface.Vertices); err != nil {
+		fmt.Println("binary.Read failed on mesh vertices array:", err)
+		return surface, err
+	}
+
+	// read faces
+	if err := binary.Read(r, endian, &surface.Faces); err != nil {
+		fmt.Println("binary.Read failed on mesh faces array:", err)
+		return surface, err
+	}
+
+	if Verbosity >= 2 {
+		var numToPrint int = 5
+		if hdr2.NumVerts >= int32(numToPrint) {
+			// print first 5 vertices
+			for i := 0; i < numToPrint; i++ {
+				for j := 0; j < 3; j++ {
+					fmt.Println("surface.Vertices[", i, "][", j, "]:", surface.Vertices[i*3+j])
+				}
+			}
+		}
+		// print first 5 faces
+		if hdr2.NumFaces >= int32(numToPrint) {
+			for i := 0; i < numToPrint; i++ {
+				for j := 0; j < 3; j++ {
+					fmt.Println("surface.Faces[", i, "][", j, "]:", surface.Faces[i*3+j])
+				}
+			}
+		}
+	}
+
 	return surface, nil
 }
