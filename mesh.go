@@ -69,9 +69,11 @@ func MeshStats(mesh Mesh) (map[string]float32, error) {
 	stats["max_y"] = max_y
 	stats["max_z"] = max_z
 
-	fmt.Printf("MeshStats: max_x: %f, max_y: %f, max_z: %f\n", max_x, max_y, max_z)
-	fmt.Printf("MeshStats: min_x: %f, min_y: %f, min_z: %f\n", min_x, min_y, min_z)
-	fmt.Printf("MeshStats: numVertices: %d, numFaces: %d\n", int(stats["numVertices"]), int(stats["numFaces"]))
+	if Verbosity >= 2 {
+		fmt.Printf("MeshStats: max_x: %f, max_y: %f, max_z: %f\n", max_x, max_y, max_z)
+		fmt.Printf("MeshStats: min_x: %f, min_y: %f, min_z: %f\n", min_x, min_y, min_z)
+		fmt.Printf("MeshStats: numVertices: %d, numFaces: %d\n", int(stats["numVertices"]), int(stats["numFaces"]))
+	}
 
 	stats["min_x"] = min_x
 	stats["min_y"] = min_y

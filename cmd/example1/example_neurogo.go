@@ -31,7 +31,7 @@ func init() {
 func main() {
 
 	apptag := "[EX1] "
-	neurogo.Verbosity = *verbosity
+	//neurogo.Verbosity = *verbosity
 
     flag.Parse()
 	fmt.Println("=====[ Neuro Example 1: Read a FreeSurfer mesh file ]=====")
@@ -84,7 +84,7 @@ func main() {
 	if err != nil {
 		fmt.Printf("%sError exporting mesh: %s", apptag, err)
 	} else {
-		fmt.Printf("%sExported mesh.", apptag)
+		fmt.Printf("%sExported mesh.\n", apptag)
 	}
 
 

@@ -8,7 +8,7 @@ import (
 // Write a string to a text file.
 func strToTextFile(s string, filepath string) (error) {
 
-	if Verbosity >= 1 {
+	if Verbosity >= 2 {
 		fmt.Printf("Writing string of length %d to file '%s'.\n", len(s), filepath)
 	}
 
