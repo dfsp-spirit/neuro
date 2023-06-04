@@ -11,7 +11,7 @@ func TestNumVertices(t *testing.T){
     want := 5
 
     if got != want {
-        t.Errorf("got %q, wanted %q", got, want)
+        t.Errorf("got %d, wanted %d", got, want)
     }
 }
 
@@ -23,7 +23,7 @@ func TestNumVerticesEmpty(t *testing.T){
     want := 0
 
     if got != want {
-        t.Errorf("got %q, wanted %q", got, want)
+        t.Errorf("got %d, wanted %d", got, want)
     }
 }
 
@@ -36,7 +36,7 @@ func TestNumFaces(t *testing.T){
     want := 5
 
     if got != want {
-        t.Errorf("got %q, wanted %q", got, want)
+        t.Errorf("got %d, wanted %d", got, want)
     }
 }
 
@@ -48,6 +48,29 @@ func TestNumFacesEmpty(t *testing.T){
     want := 0
 
     if got != want {
-        t.Errorf("got %q, wanted %q", got, want)
+        t.Errorf("got %d, wanted %d", got, want)
+    }
+}
+
+func TestCubeFaces(t *testing.T) {
+	var mycube Mesh = GenerateCube()
+
+	got := NumFaces(mycube)
+	want := 12
+
+	if got != want {
+        t.Errorf("got %d, wanted %d", got, want)
+    }
+}
+
+
+func TestCubeVertices(t *testing.T) {
+	var mycube Mesh = GenerateCube()
+
+	got := NumVertices(mycube)
+	want := 8
+
+	if got != want {
+        t.Errorf("got %d, wanted %d", got, want)
     }
 }

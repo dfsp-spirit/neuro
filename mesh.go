@@ -248,3 +248,32 @@ func NumVertices(mesh Mesh) int {
 func NumFaces(mesh Mesh) int {
 	return len(mesh.Faces) / 3
 }
+
+// GenerateCube creates and returns a Mesh representing a cube.
+func GenerateCube() Mesh {
+	
+	var mesh Mesh	
+
+	mesh.Vertices = []float32{ 1.0, 1.0, 1.0,
+						  1.0, 1.0, -1.0,
+						  1.0, -1.0, 1.0,
+						  1.0, -1.0, -1.0,
+						-1.0, 1.0, 1.0,
+						-1.0, 1.0, -1.0,
+						-1.0, -1.0, 1.0,
+						-1.0, -1.0, -1.0 }
+
+	mesh.Faces = []int32{ 0, 2, 3,
+					  3 ,1, 0,
+					  4, 6, 7,
+					  7, 5, 4,
+					  0, 4, 5,
+					  5, 1, 0,
+					  2, 6, 7,
+					  7, 3, 2,
+					  0, 4, 6,
+					  6, 2, 0,
+					  1, 5, 7,
+					  7, 3, 1 }
+	return mesh;
+}
