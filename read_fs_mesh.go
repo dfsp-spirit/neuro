@@ -13,6 +13,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io"
+	"math"
 	"os"
 	"strconv"
 )
@@ -53,6 +54,67 @@ func _magicByte3ToInt(magic []byte) (int) {
 type Mesh struct {
 	Vertices []float32
 	Faces []int32
+}
+
+
+// Compute some basic mesh statistics.
+func MeshStats(mesh Mesh) (map[string]float32, error) {
+
+	if len(mesh.Faces) == 0 {
+		return nil, fmt.Errorf("MeshStats: mesh has no faces.")
+	}
+	if len(mesh.Vertices) == 0 {
+		return nil, fmt.Errorf("MeshStats: mesh has no vertices.")
+	}
+
+	stats := map[string]float32{ "numVertices" : float32(len(mesh.Vertices) / 3),
+		 "numFaces" : float32(len(mesh.Faces) / 3)}
+
+	var max_x float32 = 0.0
+	var max_y float32 = 0.0
+	var max_z float32 = 0.0
+
+	var min_x float32 = math.MaxFloat32
+	var min_y float32 = math.MaxFloat32
+	var min_z float32 = math.MaxFloat32
+
+	for i := 0; i < len(mesh.Vertices); i += 3 {
+		if mesh.Vertices[i] > max_x {
+			max_x = mesh.Vertices[i]
+		}
+		if mesh.Vertices[i] < min_x {
+			min_x = mesh.Vertices[i]
+		}
+	}
+	for i := 1; i < len(mesh.Vertices); i += 3 {
+		if mesh.Vertices[i] > max_y {
+			max_y = mesh.Vertices[i]
+		}
+		if mesh.Vertices[i] < min_y {
+			min_y = mesh.Vertices[i]
+		}
+	}
+	for i := 2; i < len(mesh.Vertices); i += 3 {
+		if mesh.Vertices[i] > max_z {
+			max_z = mesh.Vertices[i]
+		}
+		if mesh.Vertices[i] < min_z {
+			min_z = mesh.Vertices[i]
+		}
+	}
+	stats["max_x"] = max_x
+	stats["max_y"] = max_y
+	stats["max_z"] = max_z
+
+	fmt.Printf("MeshStats: max_x: %f, max_y: %f, max_z: %f\n", max_x, max_y, max_z)
+	fmt.Printf("MeshStats: min_x: %f, min_y: %f, min_z: %f\n", min_x, min_y, min_z)
+	fmt.Printf("MeshStats: numVertices: %f, numFaces: %f\n", stats["numVertices"], stats["numFaces"])
+
+	stats["min_x"] = min_x
+	stats["min_y"] = min_y
+	stats["min_z"] = min_z
+
+	return stats, nil
 }
 
 // ReadFreesurferMesh reads a FreeSurfer mesh file and returns a Mesh struct.

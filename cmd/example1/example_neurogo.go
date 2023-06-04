@@ -49,4 +49,16 @@ func main() {
 	if *verbosity > 0 {
     	fmt.Printf("%sRead mesh with %d vertices and %d faces from meshfile '%s'.\n", apptag, len(mesh.Vertices)/3, len(mesh.Faces)/3, meshfile)
 	}
+
+	stats, err := neurogo.MeshStats(mesh)
+	if err != nil {
+		fmt.Printf("%sFailed to compute mesh statistics: '%s'.\n", apptag, err)
+		return
+	}
+
+	if *verbosity > 0 {
+    	fmt.Printf("%sMesh is in area x: %f to %f, y: %f to %f, z: %f to %f.\n", apptag, stats["min_x"], stats["max_x"], stats["min_y"], stats["max_y"], stats["min_z"], stats["max_z"])
+	}
+
+
 }
