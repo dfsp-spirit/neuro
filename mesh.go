@@ -15,10 +15,10 @@ type Mesh struct {
 // Compute some basic mesh statistics.
 func MeshStats(mesh Mesh) (map[string]float32, error) {
 
-	if len(mesh.Faces) == 0 {
+	if len(mesh.Faces) < 3 {
 		return nil, fmt.Errorf("MeshStats: mesh has no faces.")
 	}
-	if len(mesh.Vertices) == 0 {
+	if len(mesh.Vertices) < 3 {
 		return nil, fmt.Errorf("MeshStats: mesh has no vertices.")
 	}
 
@@ -33,7 +33,12 @@ func MeshStats(mesh Mesh) (map[string]float32, error) {
 	var min_y float32 = math.MaxFloat32
 	var min_z float32 = math.MaxFloat32
 
+	var mean_x float32 = 0.0
+	var mean_y float32 = 0.0
+	var mean_z float32 = 0.0
+
 	for i := 0; i < len(mesh.Vertices); i += 3 {
+		mean_x += mesh.Vertices[i] 
 		if mesh.Vertices[i] > max_x {
 			max_x = mesh.Vertices[i]
 		}
@@ -42,6 +47,7 @@ func MeshStats(mesh Mesh) (map[string]float32, error) {
 		}
 	}
 	for i := 1; i < len(mesh.Vertices); i += 3 {
+		mean_y += mesh.Vertices[i]
 		if mesh.Vertices[i] > max_y {
 			max_y = mesh.Vertices[i]
 		}
@@ -50,6 +56,7 @@ func MeshStats(mesh Mesh) (map[string]float32, error) {
 		}
 	}
 	for i := 2; i < len(mesh.Vertices); i += 3 {
+		mean_z += mesh.Vertices[i]
 		if mesh.Vertices[i] > max_z {
 			max_z = mesh.Vertices[i]
 		}
@@ -68,6 +75,10 @@ func MeshStats(mesh Mesh) (map[string]float32, error) {
 	stats["min_x"] = min_x
 	stats["min_y"] = min_y
 	stats["min_z"] = min_z
+
+	stats["mean_x"] = mean_x / float32(len(mesh.Vertices) / 3)
+	stats["mean_y"] = mean_y / float32(len(mesh.Vertices) / 3)
+	stats["mean_z"] = mean_z / float32(len(mesh.Vertices) / 3)
 
 	// Compute average edge length and average face area
 	var avg_edge_length float32 = 0.0
