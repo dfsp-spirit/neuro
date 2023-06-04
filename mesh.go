@@ -122,7 +122,7 @@ func MeshStats(mesh Mesh) (map[string]float32, error) {
 // Convert a mesh to PLY format.
 func ToPlyFormat (mesh Mesh) (string, error) {
 
-	if Verbosity >= 1 {
+	if Verbosity >= 2 {
 		fmt.Printf("Generating PLY representation for mesh with %d vertices and %d faces.\n", len(mesh.Vertices) / 3, len(mesh.Faces) / 3)
 	}
 	var ply strings.Builder
@@ -150,6 +150,11 @@ func ToPlyFormat (mesh Mesh) (string, error) {
 
 // Convert a mesh to OBJ format.
 func ToObjFormat (mesh Mesh) (string, error) {
+
+	if Verbosity >= 2 {
+		fmt.Printf("Generating OBJ representation for mesh with %d vertices and %d faces.\n", len(mesh.Vertices) / 3, len(mesh.Faces) / 3)
+	}
+
 	var obj strings.Builder
 	obj.WriteString("# neurogo\n")
 	for i := 0; i < len(mesh.Vertices); i += 3 {
@@ -165,6 +170,11 @@ func ToObjFormat (mesh Mesh) (string, error) {
 
 // Convert a mesh to STL format.
 func ToStlFormat (mesh Mesh) (string, error) {
+
+	if Verbosity >= 2 {
+		fmt.Printf("Generating STL representation for mesh with %d vertices and %d faces.\n", len(mesh.Vertices) / 3, len(mesh.Faces) / 3)
+	}
+
 	var stl strings.Builder
 	stl.WriteString("solid neurogo\n")
 	for i := 0; i < len(mesh.Faces); i += 3 {
