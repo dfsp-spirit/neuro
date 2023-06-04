@@ -12,13 +12,19 @@ import (
 
 var (
     meshfile string
+	exportfile_ply string
+	exportfile_obj string
+	exportfile_stl string
     verbosity * int
 
 	err error
 )
 
 func init() {
-    flag.StringVar(&meshfile, "meshfile", "lh.white", "The mesh file to read, in FreeSurfer curv format.")
+    flag.StringVar(&meshfile, "meshfile", "lh.white", "The input mesh file to read, in binary FreeSurfer surface format.")
+	flag.StringVar(&exportfile_ply, "exportply", "", "Output file to which to export mesh in PLY format. Path to it must exist.")
+	flag.StringVar(&exportfile_obj, "exportobj", "", "Output file to which to export mesh in OBJ format. Path to it must exist.")
+	flag.StringVar(&exportfile_stl, "exportstl", "", "Output file to which to export mesh in STL format. Path to it must exist.")
     verbosity = flag.Int("verbosity", 2, "Verbosity level: 0 = silent, 1 = info, 2 = debug.")
 }
 
@@ -61,6 +67,10 @@ func main() {
 		fmt.Printf("%sMesh has %d vertices with center of mass %f, %f, %f.\n", apptag, int(stats["numVertices"]), stats["mean_x"], stats["mean_y"], stats["mean_z"])
 		fmt.Printf("%sMesh has %d edges with average length %f.\n", apptag, int(stats["num_edges"]), stats["avg_edge_length"])
 		fmt.Printf("%sMesh has %d faces with average area %f, total mesh area is %f.\n", apptag, int(stats["numFaces"]), stats["avg_face_area"], stats["total_area"])
+	}
+
+	if len(exportfile_obj) > 0 {
+		
 	}
 
 

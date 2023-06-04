@@ -15,17 +15,17 @@ func strToTextFile(s string, filepath string) (error) {
 
 	defer f.Close()
 
-	n3, err := f.WriteString("writes\n")
+	numBytesWritten, err := f.WriteString(s)
     if err != nil {
 		err = fmt.Errorf("strToTextFile: could not write to output text file '%s': '%s'.", filepath, err)
 		return err
 	}
 
-    fmt.Printf("Wrote %d bytes\n", n3)
+	if Verbosity >= 2 {
+    	fmt.Printf("Wrote %d bytes to text file '%s'\n", numBytesWritten, filepath)
+	}
 
 	f.Sync()
-
-
 
 	return nil
 }

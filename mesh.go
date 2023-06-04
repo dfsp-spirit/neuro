@@ -191,3 +191,26 @@ func ToStlFormat (mesh Mesh) (string, error) {
 	stl += "endsolid neurogo\n"
 	return stl, nil
 }
+
+// Export a mesh to a fine in the specified mesh file format.
+//
+// Supported formats are 'obj' (Wavefront Object), 'ply', and 'stl'.
+func Export (mesh Mesh, filepath string, format string) (string, error) {
+	var mesh_rep string
+	var err error
+	if format == "stl" || format == "STL" {
+		mesh_rep, err = ToStlFormat(mesh)
+	} else if format == "obj" || format == "OBJ" {
+		mesh_rep, err = ToObjFormat(mesh)
+	} else if format == "ply" || format == "PLY" {
+		mesh_rep, err = ToPlyFormat(mesh)
+	} else {
+		err = fmt.Errorf("Invalid mesh export format specified, use one of 'obj', 'ply', 'stl'.")
+		return mesh_rep, err
+	}
+	if err != nil {
+		return mesh_rep, nil
+	}
+	err = strToTextFile(mesh_rep, filepath)
+	return mesh_rep, err
+}
