@@ -212,9 +212,13 @@ func ToStlFormat (mesh Mesh) (string, error) {
 	return stl.String(), nil
 }
 
-// Export a mesh to a fine in the specified mesh file format.
+// Export exports a mesh to a file in the specified mesh file format.
 //
 // Supported formats are 'obj' (Wavefront Object), 'ply', and 'stl'.
+//
+// Returns
+//   * string : the mesh string representation in the requested format
+//   * error  : the error if one occured, or nil otherwise
 func Export (mesh Mesh, filepath string, format string) (string, error) {
 	var mesh_rep string
 	var err error
@@ -233,4 +237,14 @@ func Export (mesh Mesh, filepath string, format string) (string, error) {
 	}
 	err = strToTextFile(mesh_rep, filepath)
 	return mesh_rep, err
+}
+
+// NumVertices computes the number of vertices of a triangular mesh.
+func NumVertices(mesh Mesh) int {
+	return len(mesh.Vertices) / 3
+}
+
+// NumFaces computes the number of faces (aka polygons, or triangles) of a triangular mesh.
+func NumFaces(mesh Mesh) int {
+	return len(mesh.Faces) / 3
 }
