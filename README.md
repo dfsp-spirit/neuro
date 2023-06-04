@@ -1,6 +1,8 @@
 # neurogo
 Work-in-progress Go module to read structural neuroimaging file formats, ignore.
 
+## About
+
 This repo contains a very early version of a [Go](https://go.dev/) module for reading structural neuroimaging file formats. Currently supported formats include:
 
 * FreeSurfer brain surface format (a triangular mesh file format, used for recon-all output files like `<subject>/lh.white`)
@@ -29,7 +31,7 @@ cd neurogo
 Running the demo app as explained below will read the provided demo file `data/lh.white` in FreeSurfer binary surface format and export it to three files in PLY (Stanford), OBJ (Wavefront Object) and STL mesh file format, respectively.
 
 
-### Building and running manually
+### Option 1: Building and running manually
 
 Build:
 
@@ -44,7 +46,7 @@ Then run it:
 ```
 
 
-### Building and running if you have `make`
+### Option 2: Building and running if you have `make`
 
 To build and run, use:
 
@@ -52,7 +54,7 @@ To build and run, use:
 make run
 ```
 
-## Visualizing the exported mesh
+### Visualizing the exported mesh
 
 
 If you have a standard mesh viewer like [MeshLab](https://www.meshlab.net/) installed, you can view the exported brain hemisphere mesh:
