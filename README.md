@@ -52,6 +52,9 @@ meshlab lhwhite.stl
 
 If not, you could use the web version at [meshlabjs.net](http://www.meshlabjs.net/) directly in your browser.
 
+![Vis](./lhwhite.jpg?raw=true "Visualization of the demo brain mesh.")
+
+
 ## Running the unit tests
 
 ```shell
