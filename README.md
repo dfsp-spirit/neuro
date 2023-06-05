@@ -5,9 +5,14 @@ Work-in-progress Go module to read structural neuroimaging file formats, ignore.
 
 This repo contains a very early version of a [Go](https://go.dev/) module for reading structural neuroimaging file formats. Currently supported formats include:
 
-* FreeSurfer brain surface format (a triangular mesh file format, used for recon-all output files like `<subject>/lh.white`)
-    - Export to PLY, STL, OBJ formats
-    - Computation of basic mesh properties (vertex and face count, bounding box, average edge length, total surface area, ...) 
+* FreeSurfer brain surface format: a triangular mesh file format. Used for recon-all output files like `<subject>/lh.white`
+    - Read file format (function `ReadFsSurface`) into `Mesh` data structure.
+    - Export `Mesh` to PLY, STL, OBJ formats.
+    - Computation of basic `Mesh` properties (vertex and face count, bounding box, average edge length, total surface area, ...)
+* FreeSurfer curv format: stores per-vertex data (also known as a brain overlay), e.g., cortical thickness at each vertex. Used for recon-all output files like `<subject>/lh.thickness`
+    - Read file format (function `ReadFsCurv`)
+    - Write file format (function `WriteFsCurv`)
+    - Export data to JSON format.
 
 
 ## Usage
