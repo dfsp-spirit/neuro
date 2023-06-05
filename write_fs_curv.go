@@ -8,8 +8,8 @@ import (
 	"os"
 )
 
-// CurvStruct is a struct representing a FreeSurfer curv file.
-type CurvStruct struct {
+// curvStruct is a struct representing a FreeSurfer curv file.
+type curvStruct struct {
 	MagicB1 uint8
 	MagicB2 uint8
 	MagicB3 uint8
@@ -19,8 +19,8 @@ type CurvStruct struct {
 	Data []float32
 }
 
-// CurvHeaderStruct is a struct representing a FreeSurfer curv file header, without the data.
-type CurvHeaderStruct struct {
+// curvHeaderStruct is a struct representing a FreeSurfer curv file header, without the data.
+type curvHeaderStruct struct {
 	MagicB1 uint8
 	MagicB2 uint8
 	MagicB3 uint8
@@ -30,8 +30,8 @@ type CurvHeaderStruct struct {
 }
 
 // getCurvStruct wraps a CurvStruct around a slice of float32 values.
-func getCurvStruct(data[]float32) CurvStruct {
-	curv := CurvStruct{
+func getCurvStruct(data[]float32) curvStruct {
+	curv := curvStruct{
 		MagicB1: 255,
 		MagicB2: 255,
 		MagicB3: 255,
@@ -44,8 +44,8 @@ func getCurvStruct(data[]float32) CurvStruct {
 }
 
 // getCurvHeaderStructForData creates a CurvStruct around a slice of float32 values.
-func getCurvHeaderStruct(data[]float32) CurvHeaderStruct {
-	curvHdr := CurvHeaderStruct{
+func getCurvHeaderStruct(data[]float32) curvHeaderStruct {
+	curvHdr := curvHeaderStruct{
 		MagicB1: 255,
 		MagicB2: 255,
 		MagicB3: 255,
