@@ -19,3 +19,9 @@
 
 # Go workspace file
 go.work
+
+# output files, from running examples
+lhwhite.ply
+lhwhite.obj
+lhwhite.stl
+lhthickness.json
