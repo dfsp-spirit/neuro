@@ -5,7 +5,7 @@ Work-in-progress Go module to read structural neuroimaging file formats, ignore.
 
 This repo contains a very early version of a [Go](https://go.dev/) module for reading structural neuroimaging file formats. Currently supported formats include:
 
-* FreeSurfer brain surface format: a triangular mesh file format. Used for recon-all output files like `<subject>/lh.white`
+* [FreeSurfer](https://freesurfer.net) brain surface format: a triangular mesh file format. Used for recon-all output files like `<subject>/lh.white`
     - Read file format (function `ReadFsSurface`) into `Mesh` data structure.
     - Export `Mesh` to PLY, STL, OBJ formats.
     - Computation of basic `Mesh` properties (vertex and face count, bounding box, average edge length, total surface area, ...)
@@ -81,3 +81,6 @@ If not, you could use the web version at [meshlabjs.net](http://www.meshlabjs.ne
 go test -v
 ```
 
+## Related packages
+
+* [github.com/okieraised/gonii](https://github.com/okieraised/gonii): Standalone, pure golang NIfTI file parser.
