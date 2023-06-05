@@ -1,10 +1,6 @@
 package neurogo
 
-// Related packages and documentation:
-// https://pkg.go.dev/github.com/oschwald/maxminddb-golang#example-Reader.Lookup-Interface
-// https://pkg.go.dev/encoding/binary#example-Read-Multi
-// maybe https://www.jonathan-petitcolas.com/2014/09/25/parsing-binary-files-in-go.html, but it's old
-//
+// Related software: libfs for C++, see:
 // https://github.com/dfsp-spirit/libfs/blob/main/include/libfs.h#L2023 for the fs surface file format
 
 import (
@@ -17,6 +13,15 @@ import (
 )
 
 // Read a newline-terminated string from a bytes.Reader.
+//
+// Parameters:
+//  - r: a bytes.Reader
+//  - endian: the byte order, e.g. binary.BigEndian
+//  - do_strip_newline: if true, strip the newline character from the end of the string
+//
+// Returns:
+//  - string: the string
+//  - error: an error if one occurred
 func readNewlineTerminatedString(r *bytes.Reader, endian binary.ByteOrder, do_strip_newline bool) (string, error) {
 
 	//endian = binary.BigEndian // TODO: make this a parameter
@@ -47,6 +52,13 @@ func readNewlineTerminatedString(r *bytes.Reader, endian binary.ByteOrder, do_st
 
 
 // ReadFreesurferMesh reads a FreeSurfer mesh file and returns a Mesh struct.
+//
+// Parameters:
+//  - filepath: path to the FreeSurfer mesh file
+//
+// Returns:
+//  - Mesh: a Mesh struct containing the mesh data
+//  - error: an error if one occurred
 func ReadFreesurferMesh(filepath string) (Mesh, error) {
 	//b := []byte{0x18, 0x2d, 0x44, 0x54, 0xfb, 0x21, 0x09, 0x40, 0xff, 0x01, 0x02, 0x03, 0xbe, 0xef}
 	//r := bytes.NewReader(b)
@@ -87,7 +99,6 @@ func ReadFreesurferMesh(filepath string) (Mesh, error) {
 		MagicB1 uint8
 		MagicB2 uint8
 		MagicB3 uint8
-		//Mine [3]byte
 	}
 
 	hdr1 := header_part1{}
@@ -99,24 +110,14 @@ func ReadFreesurferMesh(filepath string) (Mesh, error) {
 	}
 
 
-	if Verbosity > 0 {
-		fmt.Println("hdr1.Magic_b1:", hdr1.MagicB1)
-		fmt.Println("hdr1.Magic_b2:", hdr1.MagicB2)
-		fmt.Println("hdr1.Magic_b3:", hdr1.MagicB3)
-	}
-
 	if ! (hdr1.MagicB1 == 255 && hdr1.MagicB2 == 255 && hdr1.MagicB3 == 254) {
-		fmt.Println("Error: magic bytes are not 255 255 254, this is not a FreeSurfer surface file. Provide a recon-all output file like '<subject>/surf/lh.white'.")
+		fmt.Println("Error: surface magic bytes are not 255 255 254, this is not a FreeSurfer surface file. Provide a recon-all output file like '<subject>/surf/lh.white'.")
 		return surface, err
 	}
 
-	//magic := make([]byte, 3)
-	//magic[0] = hdr1.MagicB1
-	//magic[1] = hdr1.MagicB2
-	//magic[2] = hdr1.MagicB3
 
 	if Verbosity > 0 {
-		fmt.Printf("Header magic bytes: %d %d %d.\n", hdr1.MagicB1, hdr1.MagicB2, hdr1.MagicB3)
+		fmt.Printf("Surface header magic bytes: %d %d %d.\n", hdr1.MagicB1, hdr1.MagicB2, hdr1.MagicB3)
 	}
 
 	createdLine, err := readNewlineTerminatedString(r, endian, true);

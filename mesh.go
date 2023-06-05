@@ -6,7 +6,11 @@ import (
 	"strings"
 )
 
-// Mesh is a struct that holds a mesh, with vertices and faces.
+// Mesh is a struct that holds a triangular mesh, with vertices and faces. Faces are stored in vertex index representation.
+//
+// Fields:
+//   * Vertices : the vertices of the mesh, as a slice of float32 values. The vertices are stored as a flat array of 3D coordinates, i.e. [x1, y1, z1, x2, y2, z2, ...]
+//   * Faces    : the faces (a.k.a polygons or triangles) of the mesh, as a slice of int32 values. The faces are stored as a flat array of vertex indices, i.e. [v1, v2, v3, v1, v2, v3, ...]
 type Mesh struct {
 	Vertices []float32
 	Faces []int32
@@ -14,6 +18,12 @@ type Mesh struct {
 
 
 // Compute some basic mesh statistics.
+//
+// Parameters:
+//   * mesh : the mesh to compute statistics for
+//
+// Returns:
+//   * map[string]float32 : a map of statistics, with keys: 'numVertices' (number of vertices, interpret as int), 'numFaces' (number of faces, interpret as int), 'max_x', 'max_y', 'max_z', 'min_x', 'min_y', 'min_z', 'mean_x', 'mean_y', 'mean_z', 'num_edges', 'avg_edge_length', 'avg_face_area', 'total_area'.
 func MeshStats(mesh Mesh) (map[string]float32, error) {
 
 	if len(mesh.Faces) < 3 {
@@ -39,7 +49,7 @@ func MeshStats(mesh Mesh) (map[string]float32, error) {
 	var mean_z float32 = 0.0
 
 	for i := 0; i < len(mesh.Vertices); i += 3 {
-		mean_x += mesh.Vertices[i] 
+		mean_x += mesh.Vertices[i]
 		if mesh.Vertices[i] > max_x {
 			max_x = mesh.Vertices[i]
 		}
@@ -122,6 +132,13 @@ func MeshStats(mesh Mesh) (map[string]float32, error) {
 }
 
 // Convert a mesh to PLY format.
+//
+// Parameters:
+//   * mesh : the mesh to convert
+//
+// Returns:
+//   * string : the mesh string representation in PLY format
+//   * error  : the error if one occured, or nil otherwise
 func ToPlyFormat (mesh Mesh) (string, error) {
 
 	if Verbosity >= 2 {
@@ -151,6 +168,13 @@ func ToPlyFormat (mesh Mesh) (string, error) {
 }
 
 // Convert a mesh to OBJ format.
+//
+// Parameters:
+//   * mesh : the mesh to convert
+//
+// Returns:
+//   * string : the mesh string representation in OBJ format
+//   * error  : the error if one occured, or nil otherwise
 func ToObjFormat (mesh Mesh) (string, error) {
 
 	if Verbosity >= 2 {
@@ -171,6 +195,13 @@ func ToObjFormat (mesh Mesh) (string, error) {
 }
 
 // Convert a mesh to STL format.
+//
+// Parameters:
+//   * mesh : the mesh to convert
+//
+// Returns:
+//   * string : the mesh string representation in STL format
+//   * error  : the error if one occured, or nil otherwise
 func ToStlFormat (mesh Mesh) (string, error) {
 
 	if Verbosity >= 2 {
@@ -214,7 +245,10 @@ func ToStlFormat (mesh Mesh) (string, error) {
 
 // Export exports a mesh to a file in the specified mesh file format.
 //
-// Supported formats are 'obj' (Wavefront Object), 'ply', and 'stl'.
+// Parameters:
+//   * mesh     : the mesh to export
+//   * filepath : the filepath to export the mesh to
+//   * format   : the mesh file format to use, one of 'obj' (for Wavefront Object Format), 'ply' (for Stanford PLY format), 'stl' (for StereoLithography format)
 //
 // Returns
 //   * string : the mesh string representation in the requested format
@@ -240,19 +274,34 @@ func Export (mesh Mesh, filepath string, format string) (string, error) {
 }
 
 // NumVertices computes the number of vertices of a triangular mesh.
+//
+// Parameters:
+//   * mesh : the mesh to compute the number of vertices for
+//
+// Returns:
+//   * int : the number of vertices
 func NumVertices(mesh Mesh) int {
 	return len(mesh.Vertices) / 3
 }
 
 // NumFaces computes the number of faces (aka polygons, or triangles) of a triangular mesh.
+//
+// Parameters:
+//   * mesh : the mesh to compute the number of faces for
+//
+// Returns:
+//   * int : the number of faces
 func NumFaces(mesh Mesh) int {
 	return len(mesh.Faces) / 3
 }
 
 // GenerateCube creates and returns a Mesh representing a cube.
+//
+// Returns:
+//   * Mesh : the cube mesh
 func GenerateCube() Mesh {
-	
-	var mesh Mesh	
+
+	var mesh Mesh
 
 	mesh.Vertices = []float32{ 1.0, 1.0, 1.0,
 						  1.0, 1.0, -1.0,
