@@ -2,4 +2,4 @@
 package neurogo
 
 // Verbosity is the verbosity level of the package. 0 = silent, 1 = info, 2 = debug.
-var Verbosity int = 0
+var Verbosity int = 1

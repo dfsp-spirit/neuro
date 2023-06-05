@@ -65,17 +65,17 @@ func ReadFsCurv(filepath string) ([]float32, error) {
 
 
 	if err := binary.Read(r, endian, &hdr1); err != nil {
-		fmt.Println("binary.Read failed on curv header part 1:", err)
+		fmt.Println("ReadFsCurv: binary.Read failed on curv header part 1:", err)
 		return pervertex_data, err
 	}
 
 	if Verbosity > 0 {
-		fmt.Printf("Curv header magic bytes: %d %d %d.\n", hdr1.MagicB1, hdr1.MagicB2, hdr1.MagicB3)
+		fmt.Printf("ReadFsCurv: Curv header magic bytes: %d %d %d.\n", hdr1.MagicB1, hdr1.MagicB2, hdr1.MagicB3)
 	}
 
 
 	if ! (hdr1.MagicB1 == 255 && hdr1.MagicB2 == 255 && hdr1.MagicB3 == 255) {
-		fmt.Println("Error: Curv magic bytes are not 255 255 255, this is not a FreeSurfer curv file. Provide a recon-all output file like '<subject>/surf/lh.thickness'.")
+		fmt.Println("ReadFsCurv: Error: Curv magic bytes are not 255 255 255, this is not a FreeSurfer curv file. Provide a recon-all output file like '<subject>/surf/lh.thickness'.")
 		return pervertex_data, err
 	}
 
@@ -89,19 +89,20 @@ func ReadFsCurv(filepath string) ([]float32, error) {
 
 
 	if err := binary.Read(r, endian, &hdr2); err != nil {
-		fmt.Println("binary.Read failed on curv header part 2:", err)
+		fmt.Println("ReadFsCurv: binary.Read failed on curv header part 2:", err)
 		return pervertex_data, err
 	}
 
 	if Verbosity > 0 {
-		fmt.Println("NumVerts:", hdr2.NumVertices)
-		fmt.Println("NumFaces:", hdr2.NumFaces)
+		fmt.Println("ReadFsCurv: NumVertices:", hdr2.NumVertices)
+		fmt.Println("ReadFsCurv: NumFaces:", hdr2.NumFaces)
+		fmt.Println("ReadFsCurv: NumValuesPerVertex:", hdr2.NumValuesPerVertex)
 	}
 
 	// read per-vertex data
 	pervertex_data = make([]float32, hdr2.NumVertices) 	// one descriptor value per vertex
 	if err := binary.Read(r, endian, &pervertex_data); err != nil {
-		fmt.Println("binary.Read failed on per-vertex descriptor slice:", err)
+		fmt.Println("ReadFsCurv: binary.Read failed on per-vertex descriptor slice:", err)
 		return pervertex_data, err
 	}
 
