@@ -46,7 +46,7 @@ func main() {
 		return
 	}
 
-	mesh, err := neurogo.ReadFreesurferMesh(meshfile)
+	mesh, err := neurogo.ReadFsSurface(meshfile)
 	if err != nil {
 		fmt.Printf("%sFailed to read mesh from file '%s': '%s'.\n", apptag, meshfile, err)
 		return
@@ -71,15 +71,15 @@ func main() {
 
 	if len(exportfile_obj) > 0 {
 		fmt.Printf("%sExporting mesh in format %s to file '%s'.\n", apptag, "obj", exportfile_obj)
-		_, err = neurogo.Export(mesh, exportfile_obj, "obj")	
+		_, err = neurogo.Export(mesh, exportfile_obj, "obj")
 	}
 	if len(exportfile_ply) > 0 {
 		fmt.Printf("%sExporting mesh in format %s to file '%s'.\n", apptag, "ply", exportfile_ply)
-		_, err = neurogo.Export(mesh, exportfile_ply, "ply")	
+		_, err = neurogo.Export(mesh, exportfile_ply, "ply")
 	}
 	if len(exportfile_stl) > 0 {
 		fmt.Printf("%sExporting mesh in format %s to file '%s'.\n", apptag, "stl", exportfile_stl)
-		_, err = neurogo.Export(mesh, exportfile_stl, "stl")	
+		_, err = neurogo.Export(mesh, exportfile_stl, "stl")
 	}
 	if err != nil {
 		fmt.Printf("%sError exporting mesh: %s", apptag, err)

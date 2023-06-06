@@ -44,24 +44,18 @@ func readNewlineTerminatedString(r *bytes.Reader, endian binary.ByteOrder, do_st
 	return line, nil
 }
 
-//func _magicByte3ToInt(magic []byte) (int) {
-//	int1, _ := strconv.Atoi(string(magic[:])) // FIXME: incorrect
-//	int1 = ((int1 >> 8) & 0xffffff);
-//	return int1
-//}
 
-
-// ReadFreesurferMesh reads a FreeSurfer mesh file and returns a Mesh struct.
+// ReadFsSurface reads a FreeSurfer surface file and returns a Mesh struct.
+//
+// A surface file is a binary file containing the reconstructed surface of a brain hemisphere.
 //
 // Parameters:
-//  - filepath: path to the FreeSurfer mesh file
+//  - filepath: path to the FreeSurfer mesh file, e.g. '<subject>/surf/lh.white'
 //
 // Returns:
 //  - Mesh: a Mesh struct containing the mesh data
 //  - error: an error if one occurred
-func ReadFreesurferMesh(filepath string) (Mesh, error) {
-	//b := []byte{0x18, 0x2d, 0x44, 0x54, 0xfb, 0x21, 0x09, 0x40, 0xff, 0x01, 0x02, 0x03, 0xbe, 0xef}
-	//r := bytes.NewReader(b)
+func ReadFsSurface(filepath string) (Mesh, error) {
 
 	endian := binary.BigEndian
 	surface := Mesh{}

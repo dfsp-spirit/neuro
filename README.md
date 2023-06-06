@@ -66,11 +66,11 @@ If you have a standard mesh viewer like [MeshLab](https://www.meshlab.net/) inst
 
 ```shell
 meshlab lhwhite.ply
-meshlab lhwhite.obj
-meshlab lhwhite.stl
 ```
 
-If not, you could use the web version at [meshlabjs.net](http://www.meshlabjs.net/) directly in your browser.
+You can also try the other file formats (`meshlab lhwhite.obj`, `meshlab lhwhite.stl`) but the meshes look identical.
+
+If you do not have a mesh viewer installed, you can use the web version of MeshLab at [meshlabjs.net](http://www.meshlabjs.net/) directly in your browser.
 
 ![Vis](./lhwhite.jpg?raw=true "Visualization of the demo brain mesh.")
 
