@@ -1,6 +1,7 @@
 package neuro
 
 import (
+	"fmt"
 	"math"
 	"testing"
 )
@@ -134,4 +135,22 @@ func TestMeshStats(t *testing.T) {
     if ! almostEqualF32(gotTotalArea, wantTotalArea, 1e-6) {
         t.Errorf("got TotalArea=%.18f, wanted %.18f", gotTotalArea, wantTotalArea)
     }
+}
+
+func ExampleMesh() {
+	var mycube Mesh = GenerateCube()
+	nv := NumVertices(mycube)
+	nf := NumFaces(mycube)
+	fmt.Printf("Cube mesh has %d vertices and %d faces.\n", nv, nf)
+	// Output: Cube mesh has 8 vertices and 12 faces.
+}
+
+func ExampleMesh_fromData() {
+	mesh := Mesh{}
+	mesh.Vertices = []float32{0.0, 1.0, 2.0, 3.0, 4.0, 5.0} // 2 vertices, 3 dimensions each
+    mesh.Faces = []int32{0, 1, 2, 3, 4, 5}                 // 2 faces, 3 vertices each
+    nv := NumVertices(mesh)
+	nf := NumFaces(mesh)
+	fmt.Printf("Mesh has %d vertices and %d faces.\n", nv, nf)
+	// Output: Mesh has 2 vertices and 2 faces.
 }
