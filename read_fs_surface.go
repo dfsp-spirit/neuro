@@ -1,4 +1,4 @@
-package neurogo
+package neuro
 
 // Related software: libfs for C++, see:
 // https://github.com/dfsp-spirit/libfs/blob/main/include/libfs.h#L2023 for the fs surface file format

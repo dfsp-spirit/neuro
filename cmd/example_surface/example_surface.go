@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/dfsp-spirit/neurogo"
+	"github.com/dfsp-spirit/neuro"
 )
 
 var (
@@ -46,7 +46,7 @@ func main() {
 		return
 	}
 
-	mesh, err := neurogo.ReadFsSurface(meshfile)
+	mesh, err := neuro.ReadFsSurface(meshfile)
 	if err != nil {
 		fmt.Printf("%sFailed to read mesh from file '%s': '%s'.\n", apptag, meshfile, err)
 		return
@@ -56,7 +56,7 @@ func main() {
     	fmt.Printf("%sRead mesh with %d vertices and %d faces from meshfile '%s'.\n", apptag, len(mesh.Vertices)/3, len(mesh.Faces)/3, meshfile)
 	}
 
-	stats, err := neurogo.MeshStats(mesh)
+	stats, err := neuro.MeshStats(mesh)
 	if err != nil {
 		fmt.Printf("%sFailed to compute mesh statistics: '%s'.\n", apptag, err)
 		return
@@ -71,15 +71,15 @@ func main() {
 
 	if len(exportfile_obj) > 0 {
 		fmt.Printf("%sExporting mesh in format %s to file '%s'.\n", apptag, "obj", exportfile_obj)
-		_, err = neurogo.Export(mesh, exportfile_obj, "obj")
+		_, err = neuro.Export(mesh, exportfile_obj, "obj")
 	}
 	if len(exportfile_ply) > 0 {
 		fmt.Printf("%sExporting mesh in format %s to file '%s'.\n", apptag, "ply", exportfile_ply)
-		_, err = neurogo.Export(mesh, exportfile_ply, "ply")
+		_, err = neuro.Export(mesh, exportfile_ply, "ply")
 	}
 	if len(exportfile_stl) > 0 {
 		fmt.Printf("%sExporting mesh in format %s to file '%s'.\n", apptag, "stl", exportfile_stl)
-		_, err = neurogo.Export(mesh, exportfile_stl, "stl")
+		_, err = neuro.Export(mesh, exportfile_stl, "stl")
 	}
 	if err != nil {
 		fmt.Printf("%sError exporting mesh: %s", apptag, err)

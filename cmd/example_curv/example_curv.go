@@ -9,7 +9,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/dfsp-spirit/neurogo"
+	"github.com/dfsp-spirit/neuro"
 )
 
 var (
@@ -44,7 +44,7 @@ func main() {
 		return
 	}
 
-	pervertex_data, err := neurogo.ReadFsCurv(curvfile)
+	pervertex_data, err := neuro.ReadFsCurv(curvfile)
 	if err != nil {
 		fmt.Printf("%sFailed to read per-vertex data from file '%s': '%s'.\n", apptag, curvfile, err)
 		return

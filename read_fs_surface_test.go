@@ -1,1 +1,1 @@
-package neurogo
+package neuro

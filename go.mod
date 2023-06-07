@@ -1,4 +1,4 @@
-module github.com/dfsp-spirit/neurogo
+module github.com/dfsp-spirit/neuro
 
 go 1.20
 

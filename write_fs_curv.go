@@ -1,4 +1,4 @@
-package neurogo
+package neuro
 
 import (
 	"bufio"

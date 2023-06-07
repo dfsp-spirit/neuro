@@ -1,5 +1,5 @@
-# neurogo
-Work-in-progress Go module to read structural neuroimaging file formats, ignore.
+# neuro
+Work-in-progress Go module to read structural neuroimaging file formats, ignore for now.
 
 ## About
 
@@ -29,8 +29,8 @@ To build (but not to run), you will need to have golang installed. The installat
 If you have go, clone this repo and change into it:
 
 ```shell
-git clone https://github.com/dfsp-spirit/neurogo
-cd neurogo
+git clone https://github.com/dfsp-spirit/neuro
+cd neuro
 ```
 
 Running the demo app as explained below will read the provided demo file `data/lh.white` in FreeSurfer binary surface format and export it to three files in PLY (Stanford), OBJ (Wavefront Object) and STL mesh file format, respectively.
@@ -41,13 +41,13 @@ Running the demo app as explained below will read the provided demo file `data/l
 Build:
 
 ```shell
-go build cmd/example1/example_neurogo.go
+go build cmd/example_surface/example_surface.go
 ```
 
 Then run it:
 
 ```shell
-./example_neurogo --meshfile data/lh.white --exportply lhwhite.ply --exportobj lhwhite.obj --exportstl lhwhite.stl
+./example_neuro --meshfile data/lh.white --exportply lhwhite.ply --exportobj lhwhite.obj --exportstl lhwhite.stl
 ```
 
 
