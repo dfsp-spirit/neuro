@@ -3,6 +3,7 @@ package neuro
 // https://pkg.go.dev/testing
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -35,4 +36,14 @@ func TestReadFsCurv(t *testing.T){
 		t.Errorf("got mean value %f in curv file, wanted between 1.0 and 3.0", gotMean)
 	}
 
+}
+
+func ExampleReadFsCurv() {
+	var curvFile string = "testdata/lh.thickness"
+
+	// Read the curv file
+	pvdata, _ := ReadFsCurv(curvFile)
+
+	fmt.Printf("Read %d values from curv file '%s'.\n", len(pvdata), curvFile)
+	// Output: Read 149244 values from curv file 'testdata/lh.thickness'.
 }
