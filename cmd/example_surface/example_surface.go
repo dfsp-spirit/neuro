@@ -63,10 +63,10 @@ func main() {
 	}
 
 	if *verbosity > 0 {
-    	fmt.Printf("%sMesh is in area x: %f to %f, y: %f to %f, z: %f to %f.\n", apptag, stats["min_x"], stats["max_x"], stats["min_y"], stats["max_y"], stats["min_z"], stats["max_z"])
-		fmt.Printf("%sMesh has %d vertices with center of mass %f, %f, %f.\n", apptag, int(stats["numVertices"]), stats["mean_x"], stats["mean_y"], stats["mean_z"])
-		fmt.Printf("%sMesh has %d edges with average length %f.\n", apptag, int(stats["num_edges"]), stats["avg_edge_length"])
-		fmt.Printf("%sMesh has %d faces with average area %f, total mesh area is %f.\n", apptag, int(stats["numFaces"]), stats["avg_face_area"], stats["total_area"])
+    	fmt.Printf("%sMesh is in area x: %f to %f, y: %f to %f, z: %f to %f.\n", apptag, stats["minX"], stats["maxX"], stats["minY"], stats["maxY"], stats["minZ"], stats["maxZ"])
+		fmt.Printf("%sMesh has %d vertices with center of mass %f, %f, %f.\n", apptag, int(stats["numVertices"]), stats["meanX"], stats["meanY"], stats["meanZ"])
+		fmt.Printf("%sMesh has %d edges with average length %f.\n", apptag, int(stats["numEdges"]), stats["avgEdgeLength"])
+		fmt.Printf("%sMesh has %d faces with average area %f, total mesh area is %f.\n", apptag, int(stats["numFaces"]), stats["avgFaceArea"], stats["totalArea"])
 	}
 
 	if len(exportfile_obj) > 0 {
