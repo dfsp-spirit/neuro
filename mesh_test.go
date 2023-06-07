@@ -165,7 +165,7 @@ func ExampleMesh_fromSurfaceFile() {
     // Output: Surface has 149244 vertices and 298484 faces.
 }
 
-func ExampleMesh_fromSurfaceFile_statsVerts() {
+func ExampleMeshStats_fromSurfaceFileVerts() {
     var surfFile string = "testdata/lh.white"
     surf, _ := ReadFsSurface(surfFile)
 
