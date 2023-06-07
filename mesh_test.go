@@ -154,3 +154,16 @@ func ExampleMesh_fromData() {
 	fmt.Printf("Mesh has %d vertices and %d faces.\n", nv, nf)
 	// Output: Mesh has 2 vertices and 2 faces.
 }
+
+func ExampleMesh_fromSurfaceFile() {
+    var surfFile string = "testdata/lh.white"
+
+    // Read the surface file
+    surf, _ := ReadFsSurface(surfFile)
+
+    nv := NumVertices(surf)
+    nf := NumFaces(surf)
+    fmt.Printf("Surface has %d vertices and %d faces.\n", nv, nf)
+    // Output: Surface has 149244 vertices and 298484 faces.
+
+}
