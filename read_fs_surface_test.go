@@ -3,6 +3,7 @@ package neuro
 // https://pkg.go.dev/testing
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -27,3 +28,12 @@ func TestReadFsSurface(t *testing.T){
 	}
 }
 
+func ExampleReadFsSurface() {
+	var surfaceFile string = "testdata/lh.white"
+
+	// Read the curv file
+	mesh, _ := ReadFsSurface(surfaceFile)
+
+	fmt.Printf("Read mesh with %d vertices and %d faces from surface file '%s'.\n", len(mesh.Vertices)/3, len(mesh.Faces)/3, surfaceFile)
+	// Output: Read mesh with 149244 vertices and 298484 faces from surface file 'testdata/lh.white'.
+}
