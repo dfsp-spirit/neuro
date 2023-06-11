@@ -61,7 +61,7 @@ func ReadFsSurface(filepath string) (Mesh, error) {
 	surface := Mesh{}
 
 	if _, err := os.Stat(filepath); err != nil {
-		fmt.Printf("Could not stat file '%s'\n.", filepath)
+		err := fmt.Errorf("Could not stat surface file '%f': %s\n", filepath, err)
 		return surface, err
 	}
 
