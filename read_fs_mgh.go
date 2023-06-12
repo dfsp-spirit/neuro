@@ -13,6 +13,18 @@ import (
 )
 
 
+// MRI data type representing an 8 bit unsigned integer.
+const MRI_UCHAR int32 = 0
+  
+// MRI data type representing a 32 bit signed integer.
+const MRI_INT int32 = 1
+
+// MRI data type representing a 32 bit float.
+const MRI_FLOAT int32 = 3
+
+// MRI data type representing a 16 bit signed integer.
+const MRI_SHORT int32 = 4
+
 // MghHeader models the header section of an MGH file.
 // MGH stands for Massachusetts General Hospital, and the MGH format is a binary format for 
 // storing 3-dimensional or 4-dimensional structural MRI images of the human brain. The MGZ
@@ -25,22 +37,31 @@ type MghHeader struct {
 	Dim4Length int32
 	MghDataType int32
 	DoF int32
-	RasGoodFlag int16
+	RasGoodFlag int16  // flag (1=yes, everything else=no) indicating whether the file contains valid RAS info. 
+
+	// All fields below are so-called RAS info fields. They should be ignored (assumed to contain random data) unless RasGoodFlag is 1.
+	XSize float32  // size of voxels in x direction (mm)
+	YSize float32  // size of voxels in y direction (mm)
+	ZSize float32  // size of voxels in z direction (mm)
+	
+	Mdc [9]float32 // 9 float values, the 3x3 Mdc matrix that contains image orientation information. The interpretation order is row wise (row1-column1, row1-column2, row1-column3, row2-column1, ...)
+	Pxyz_c [3]float32  // 3 float values, the xyz coordinates of the central voxel. Think of the name 'Pxyz_c' as 'Point (x,y,z) coordinates of the center'. 
+
+	// There are 194 more (currently unused) bytes reserved for the header before the data part starts.
+	Reserved [194]uint8  // Reached end of header after 284 bytes.
 }
 
-// getMghDataTypCode translates an MRI data type code (int32) into the respective name (string).
+// Struct modelling the data part of an MGH file. Only the data in the field identified by MghDataType is valid.
+type MghData struct {
+	DataMriUchar []uint8
+	DataMriInt []int32
+	DataMriFloat []float32
+	DataMriShort []int16
+	MghDataType int32
+}
+
+// getMghDataTypeName translates an MRI data type code (int32) into the respective name (string).
 func getMghDataTypeName(dtCode int32) (string, error) {
-	// MRI data type representing an 8 bit unsigned integer.
-	const MRI_UCHAR int32 = 0
-  
-	// MRI data type representing a 32 bit signed integer.
-  	const MRI_INT int32 = 1
-
-  	// MRI data type representing a 32 bit float.
-  	const MRI_FLOAT int32 = 3
-
-  	// MRI data type representing a 16 bit signed integer.
-  	const MRI_SHORT int32 = 4
 
 	switch dt := dtCode; dt {
 	case MRI_UCHAR:
@@ -57,19 +78,8 @@ func getMghDataTypeName(dtCode int32) (string, error) {
 	}
 }
 
-// getMghDataTypCode translates an MRI data type name (string) into the respective header code (int32).
-func getMghDataTypCode(dtName string) (int32, error) {
-	// MRI data type representing an 8 bit unsigned integer.
-	const MRI_UCHAR int32 = 0
-  
-	// MRI data type representing a 32 bit signed integer.
-  	const MRI_INT int32 = 1
-
-  	// MRI data type representing a 32 bit float.
-  	const MRI_FLOAT int32 = 3
-
-  	// MRI data type representing a 16 bit signed integer.
-  	const MRI_SHORT int32 = 4
+// getMghDataTypeCode translates an MRI data type name (string) into the respective header code (int32).
+func getMghDataTypeCode(dtName string) (int32, error) {
 
 	switch dt := dtName; dt {
 	case "MRI_UCHAR":
@@ -134,9 +144,14 @@ func ReadFsMghHeader(filepath string) (MghHeader, error) {
 		return hdr, err
 	}
 
+	dataTypeName, err := getMghDataTypeName(hdr.MghDataType)
+	if err != nil {
+		return hdr, err
+	}
+
 	if Verbosity > 0 {
-		fmt.Printf("ReadFsMghHeader: Mgh version=%d, dimensions: %d %d %d %d.\n", hdr.MghVersion, hdr.Dim1Length, hdr.Dim2Length, hdr.Dim3Length, hdr.Dim4Length)
-		fmt.Printf("ReadFsMghHeader: Mgh data type=%d, DoF=%d, RAS good=%d.\n", hdr.MghDataType, hdr.DoF, hdr.RasGoodFlag)
+		fmt.Printf("ReadFsMghHeader: Mgh version=%d, dimensions: %d %d %d %d.\n", hdr.MghVersion, hdr.Dim1Length, hdr.Dim2Length, hdr.Dim3Length, hdr.Dim4Length)		 
+		fmt.Printf("ReadFsMghHeader: Mgh data type=%d (%s), DoF=%d, RAS good=%d.\n", hdr.MghDataType, dataTypeName, hdr.DoF, hdr.RasGoodFlag)
 	}
 
 	if hdr.MghVersion != 1 {
@@ -144,6 +159,299 @@ func ReadFsMghHeader(filepath string) (MghHeader, error) {
 		return hdr, err
 	}
 
+	if Verbosity > 0 && hdr.RasGoodFlag == 1 {
+		fmt.Printf("ReadFsMghHeader: Mgh voxel size x y z: %f, %f, %f.\n", hdr.XSize, hdr.YSize, hdr.ZSize)
+		fmt.Printf("ReadFsMghHeader: Mgh Mdc: row0=%f, %f, %f. row1=%f, %f, %f. row2=%f, %f, %f.\n", hdr.Mdc[0], hdr.Mdc[1], hdr.Mdc[2], hdr.Mdc[3], hdr.Mdc[4], hdr.Mdc[5], hdr.Mdc[6], hdr.Mdc[7], hdr.Mdc[8])
+		fmt.Printf("ReadFsMghHeader: Mgh Pxyz_c: %f, %f, %f.\n", hdr.Pxyz_c[0], hdr.Pxyz_c[1], hdr.Pxyz_c[2])
+	}
+	
 	return hdr, nil
+}
 
+// Mgh models a full MGH format file, including the MghHeader and the MghData.
+// See the separate documention for MghHeader and MghData for details on accessing fields.
+type Mgh struct {
+	header MghHeader
+	data MghData
+}
+
+func ReadFsMgh(filepath string) (Mgh, error) {
+	var mgh Mgh
+	hdr, err := ReadFsMghHeader(filepath)
+	if err != nil {
+		err := fmt.Errorf("Failed to read MGH header: %s.", err)
+		return mgh, err
+	}
+	mgh.header = hdr
+	data, err := ReadFsMghData(filepath, hdr)
+	if err != nil {
+		err := fmt.Errorf("Failed to read MGH data: %s.", err)
+		return mgh, err
+	}
+	mgh.data = data
+	return mgh, nil
+}
+
+func ReadFsMghData(filepath string, hdr MghHeader) (MghData, error) {
+
+	readMghData := MghData{}
+	readMghData.MghDataType = -1
+	
+	switch dt := hdr.MghDataType; dt {
+	case MRI_INT:
+		arr, err := readFsMghDataMriInt(filepath, hdr)
+		if err != nil {
+			err := fmt.Errorf("Failed to read MRI_INT data from MGH file '%s': %s.\n", filepath, err)
+			return readMghData, err
+		}
+		readMghData.DataMriInt = arr
+	case MRI_FLOAT:
+		arr, err := readFsMghDataMriFloat(filepath, hdr)
+		if err != nil {
+			err := fmt.Errorf("Failed to read MRI_FLOAT data from MGH file '%s': %s.\n", filepath, err)
+			return readMghData, err
+		}
+		readMghData.DataMriFloat = arr
+	case MRI_UCHAR:
+		arr, err := readFsMghDataMriUchar(filepath, hdr)
+		if err != nil {
+			err := fmt.Errorf("Failed to read MRI_UCHAR data from MGH file '%s': %s.\n", filepath, err)
+			return readMghData, err
+		}
+		readMghData.DataMriUchar = arr
+	case MRI_SHORT:
+		arr, err := readFsMghDataMriShort(filepath, hdr)
+		if err != nil {
+			err := fmt.Errorf("Failed to read MRI_SHORT data from MGH file '%s': %s.\n", filepath, err)
+			return readMghData, err
+		}
+		readMghData.DataMriShort = arr
+	default:
+		return readMghData, fmt.Errorf("Header of MGH file '%s' declares unsupported MGH data type code: %d.\n", filepath, dt)
+	}
+	readMghData.MghDataType = hdr.MghDataType
+	return readMghData, nil
+}
+
+
+// readFsMghDataMriInt reads the MRI_INT data array part of an MGH format file.
+func readFsMghDataMriInt(filepath string, hdr MghHeader) ([]int32, error) {
+
+	var numValues int64 = (int64)(hdr.Dim1Length * hdr.Dim2Length * hdr.Dim3Length * hdr.Dim4Length)
+	dataArr := make([]int32, numValues)
+	var mghDataType string = "MRI_INT"
+
+	endian := binary.BigEndian
+	if _, err := os.Stat(filepath); err != nil {
+		err := fmt.Errorf("ReadFsMghData: Could not stat MGH file '%s': %s\n.", filepath, err)
+		return dataArr, err
+	}
+
+	file, err := os.Open(filepath)
+	if err != nil {
+		err := fmt.Errorf("ReadFsMghData: Could not open file MGH file '%s' for reading: %s\n", filepath, err)
+   		return dataArr, err
+	}
+	defer file.Close()
+
+	// Get the file size
+	stat, err := file.Stat()
+	if err != nil {
+	   fmt.Println(err)
+	   return dataArr, err
+	}
+
+	// Read the file into a byte slice
+	bs := make([]byte, stat.Size())
+	_, err = bufio.NewReader(file).Read(bs)
+	if err != nil && err != io.EOF {
+	   fmt.Println(err)
+	   return dataArr, err
+	}
+
+	// Read the byte slice
+	r := bytes.NewReader(bs)
+
+	// Skip the header
+	numBytesHeader := 284
+	skippedHeaderData := make([]uint8, numBytesHeader)
+	if err := binary.Read(r, endian, &skippedHeaderData); err != nil {
+		err := fmt.Errorf("ReadFsMghData: binary.Read failed on header part of MGH file %s: %s", filepath, err)
+		return dataArr, err
+	}
+
+	// Read the data
+	if err := binary.Read(r, endian, &dataArr); err != nil {
+		err := fmt.Errorf("ReadFsMghData: binary.Read failed on %d values of %s data: %s", numValues, mghDataType, err)
+		return dataArr, err
+	}
+
+	return dataArr, nil
+}
+
+// readFsMghDataMriFloat reads the MRI_FLOAT data array part of an MGH format file.
+func readFsMghDataMriFloat(filepath string, hdr MghHeader) ([]float32, error) {
+
+	var numValues int64 = (int64)(hdr.Dim1Length * hdr.Dim2Length * hdr.Dim3Length * hdr.Dim4Length)
+	dataArr := make([]float32, numValues)
+	var mghDataType string = "MRI_FLOAT"
+
+	endian := binary.BigEndian
+	if _, err := os.Stat(filepath); err != nil {
+		err := fmt.Errorf("ReadFsMghData: Could not stat MGH file '%s': %s\n.", filepath, err)
+		return dataArr, err
+	}
+
+	file, err := os.Open(filepath)
+	if err != nil {
+		err := fmt.Errorf("ReadFsMghData: Could not open file MGH file '%s' for reading: %s\n", filepath, err)
+   		return dataArr, err
+	}
+	defer file.Close()
+
+	// Get the file size
+	stat, err := file.Stat()
+	if err != nil {
+	   fmt.Println(err)
+	   return dataArr, err
+	}
+
+	// Read the file into a byte slice
+	bs := make([]byte, stat.Size())
+	_, err = bufio.NewReader(file).Read(bs)
+	if err != nil && err != io.EOF {
+	   fmt.Println(err)
+	   return dataArr, err
+	}
+
+	// Read the byte slice
+	r := bytes.NewReader(bs)
+
+	// Skip the header
+	numBytesHeader := 284
+	skippedHeaderData := make([]uint8, numBytesHeader)
+	if err := binary.Read(r, endian, &skippedHeaderData); err != nil {
+		err := fmt.Errorf("ReadFsMghData: binary.Read failed on header part of MGH file %s: %s", filepath, err)
+		return dataArr, err
+	}
+
+	// Read the data
+	if err := binary.Read(r, endian, &dataArr); err != nil {
+		err := fmt.Errorf("ReadFsMghData: binary.Read failed on %d values of %s data: %s", numValues, mghDataType, err)
+		return dataArr, err
+	}
+
+	return dataArr, nil
+}
+
+
+// readFsMghDataMriuchar reads the MRI_UCHAR data array part of an MGH format file.
+func readFsMghDataMriUchar(filepath string, hdr MghHeader) ([]uint8, error) {
+
+	var numValues int64 = (int64)(hdr.Dim1Length * hdr.Dim2Length * hdr.Dim3Length * hdr.Dim4Length)
+	dataArr := make([]uint8, numValues)
+	var mghDataType string = "MRI_UCHAR"
+
+	endian := binary.BigEndian
+	if _, err := os.Stat(filepath); err != nil {
+		err := fmt.Errorf("ReadFsMghData: Could not stat MGH file '%s': %s\n.", filepath, err)
+		return dataArr, err
+	}
+
+	file, err := os.Open(filepath)
+	if err != nil {
+		err := fmt.Errorf("ReadFsMghData: Could not open file MGH file '%s' for reading: %s\n", filepath, err)
+   		return dataArr, err
+	}
+	defer file.Close()
+
+	// Get the file size
+	stat, err := file.Stat()
+	if err != nil {
+	   fmt.Println(err)
+	   return dataArr, err
+	}
+
+	// Read the file into a byte slice
+	bs := make([]byte, stat.Size())
+	_, err = bufio.NewReader(file).Read(bs)
+	if err != nil && err != io.EOF {
+	   fmt.Println(err)
+	   return dataArr, err
+	}
+
+	// Read the byte slice
+	r := bytes.NewReader(bs)
+
+	// Skip the header
+	numBytesHeader := 284
+	skippedHeaderData := make([]uint8, numBytesHeader)
+	if err := binary.Read(r, endian, &skippedHeaderData); err != nil {
+		err := fmt.Errorf("ReadFsMghData: binary.Read failed on header part of MGH file %s: %s", filepath, err)
+		return dataArr, err
+	}
+
+	// Read the data
+	if err := binary.Read(r, endian, &dataArr); err != nil {
+		err := fmt.Errorf("ReadFsMghData: binary.Read failed on %d values of %s data: %s", numValues, mghDataType, err)
+		return dataArr, err
+	}
+
+	return dataArr, nil
+}
+
+
+// readFsMghDataMrishort reads the MRI_SHORT data array part of an MGH format file.
+func readFsMghDataMriShort(filepath string, hdr MghHeader) ([]int16, error) {
+
+	var numValues int64 = (int64)(hdr.Dim1Length * hdr.Dim2Length * hdr.Dim3Length * hdr.Dim4Length)
+	dataArr := make([]int16, numValues)
+	var mghDataType string = "MRI_SHORT"
+
+	endian := binary.BigEndian
+	if _, err := os.Stat(filepath); err != nil {
+		err := fmt.Errorf("ReadFsMghDataMriShort: Could not stat MGH file '%s': %s\n.", filepath, err)
+		return dataArr, err
+	}
+
+	file, err := os.Open(filepath)
+	if err != nil {
+		err := fmt.Errorf("ReadFsMghDataMriShort: Could not open file MGH file '%s' for reading: %s\n", filepath, err)
+   		return dataArr, err
+	}
+	defer file.Close()
+
+	// Get the file size
+	stat, err := file.Stat()
+	if err != nil {
+	   fmt.Println(err)
+	   return dataArr, err
+	}
+
+	// Read the file into a byte slice
+	bs := make([]byte, stat.Size())
+	_, err = bufio.NewReader(file).Read(bs)
+	if err != nil && err != io.EOF {
+	   fmt.Println(err)
+	   return dataArr, err
+	}
+
+	// Read the byte slice
+	r := bytes.NewReader(bs)
+
+	// Skip the header
+	numBytesHeader := 284
+	skippedHeaderData := make([]uint8, numBytesHeader)
+	if err := binary.Read(r, endian, &skippedHeaderData); err != nil {
+		err := fmt.Errorf("ReadFsMghDataMriShort: binary.Read failed on header part of MGH file %s: %s", filepath, err)
+		return dataArr, err
+	}
+
+	// Read the data
+	if err := binary.Read(r, endian, &dataArr); err != nil {
+		err := fmt.Errorf("ReadFsMghDataMriShort: binary.Read failed on %d values of %s data: %s", numValues, mghDataType, err)
+		return dataArr, err
+	}
+
+	return dataArr, nil
 }
