@@ -288,6 +288,10 @@ func readFsMghDataMriInt(filepath string, hdr MghHeader, treatGzipped bool) ([]i
 	dataArr := make([]int32, numValues)
 	var mghDataType string = "MRI_INT"
 
+	if Verbosity >= 0 {
+		fmt.Printf("Reading %d values of type %s from MGH file '%s', treatGzipped=%t\n", numValues, mghDataType, filepath, treatGzipped)
+	}
+
 	endian := binary.BigEndian
 
 	bs, err := readFileIntoByteSlice(filepath, treatGzipped)
@@ -323,6 +327,10 @@ func readFsMghDataMriFloat(filepath string, hdr MghHeader, treatGzipped bool) ([
 	dataArr := make([]float32, numValues)
 	var mghDataType string = "MRI_FLOAT"
 
+	if Verbosity >= 0 {
+		fmt.Printf("Reading %d values of type %s from MGH file '%s', treatGzipped=%t\n", numValues, mghDataType, filepath, treatGzipped)
+	}
+
 	endian := binary.BigEndian
 	bs, err := readFileIntoByteSlice(filepath, treatGzipped)
 	if err != nil {
@@ -345,7 +353,6 @@ func readFsMghDataMriFloat(filepath string, hdr MghHeader, treatGzipped bool) ([
 		err := fmt.Errorf("ReadFsMghData: binary.Read failed on %d values of %s data: %s", numValues, mghDataType, err)
 		return dataArr, err
 	}
-
 	return dataArr, nil
 }
 
@@ -356,6 +363,10 @@ func readFsMghDataMriUchar(filepath string, hdr MghHeader, treatGzipped bool) ([
 	var numValues int64 = (int64)(hdr.Dim1Length * hdr.Dim2Length * hdr.Dim3Length * hdr.Dim4Length)
 	dataArr := make([]uint8, numValues)
 	var mghDataType string = "MRI_UCHAR"
+
+	if Verbosity >= 0 {
+		fmt.Printf("Reading %d values of type %s from MGH file '%s', treatGzipped=%t\n", numValues, mghDataType, filepath, treatGzipped)
+	}
 
 	endian := binary.BigEndian
 	bs, err := readFileIntoByteSlice(filepath, treatGzipped)
@@ -390,6 +401,10 @@ func readFsMghDataMriShort(filepath string, hdr MghHeader, treatGzipped bool) ([
 	var numValues int64 = (int64)(hdr.Dim1Length * hdr.Dim2Length * hdr.Dim3Length * hdr.Dim4Length)
 	dataArr := make([]int16, numValues)
 	var mghDataType string = "MRI_SHORT"
+
+	if Verbosity >= 0 {
+		fmt.Printf("Reading %d values of type %s from MGH file '%s', treatGzipped=%t\n", numValues, mghDataType, filepath, treatGzipped)
+	}
 
 	endian := binary.BigEndian
 
