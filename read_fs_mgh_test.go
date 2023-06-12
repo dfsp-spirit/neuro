@@ -9,7 +9,7 @@ import (
 func TestReadFsMghHeader(t *testing.T){
 	var mghFile string = "testdata/brain.mgh"
 
-	hdr, _ := ReadFsMghHeader(mghFile)
+	hdr, _ := ReadFsMghHeader(mghFile, "auto")
 
 	got := hdr.MghDataType
 	want, _ := getMghDataTypeCode("MRI_UCHAR")
@@ -22,7 +22,7 @@ func TestReadFsMghHeader(t *testing.T){
 func TestReadFsMghHeaderRAS(t *testing.T){
 	var mghFile string = "testdata/brain.mgh"
 
-	hdr, _ := ReadFsMghHeader(mghFile)
+	hdr, _ := ReadFsMghHeader(mghFile, "no")
 
 	got := hdr.RasGoodFlag
 	var want int16 = 1
@@ -35,7 +35,7 @@ func TestReadFsMghHeaderRAS(t *testing.T){
 func TestReadFsMghFull(t *testing.T){
 	var mghFile string = "testdata/brain.mgh"
 
-	mgh, _ := ReadFsMgh(mghFile)
+	mgh, _ := ReadFsMgh(mghFile, "auto")
 
 	got := mgh.header.RasGoodFlag
 	var want int16 = 1
@@ -48,7 +48,7 @@ func TestReadFsMghFull(t *testing.T){
 func TestReadFsMghFullAt0000(t *testing.T){
 	var mghFile string = "testdata/brain.mgh"
 
-	mgh, _ := ReadFsMgh(mghFile)
+	mgh, _ := ReadFsMgh(mghFile, "no")
 
 	got := mgh.data.DataMriUchar[0]
 	var want uint8 = 0
@@ -61,7 +61,24 @@ func TestReadFsMghFullAt0000(t *testing.T){
 func TestReadFsMghFullSum(t *testing.T){
 	var mghFile string = "testdata/brain.mgh"
 
-	mgh, _ := ReadFsMgh(mghFile)
+	mgh, _ := ReadFsMgh(mghFile, "no")
+
+	var sum int = 0
+	for _, voxel_val := range mgh.data.DataMriUchar {
+		sum += int(voxel_val)
+	}
+	var got = sum
+	var want int = 121035479  // known from external tests with standard software.
+
+	if got != want {
+		t.Errorf("got MGH data sum=%d, wanted %d", got, want)
+	}
+}
+
+func TestReadFsMgzFullSum(t *testing.T){
+	var mgzFile string = "testdata/brain.mgz"
+
+	mgh, _ := ReadFsMgh(mgzFile, "yes")
 
 	var sum int = 0
 	for _, voxel_val := range mgh.data.DataMriUchar {

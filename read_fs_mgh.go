@@ -10,6 +10,8 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
+	"compress/gzip"
 )
 
 
@@ -96,6 +98,72 @@ func getMghDataTypeCode(dtName string) (int32, error) {
 	}
 }
 
+
+// Determine or guess from filepath and is_gzipped whether the file at filepath is in gzip format. 
+func getIsGzipped(filepath string, is_gzipped string) (bool) {
+	switch is_gzipped {
+	case "yes":
+		return true
+	case "no":
+		return false
+	case "auto":
+		fpl := strings.ToLower(filepath)
+		if strings.HasSuffix(fpl, ".mgz") || strings.HasSuffix(fpl, ".gz") {
+			return true
+		} else {
+			return false
+		}
+	default:
+		panic("is_gzipped must be one of 'yes', 'no', or 'auto'.")
+	}
+}
+
+func readFileIntoByteSlice(filepath string, treatGzipped bool) ([]byte, error) {
+	
+	bs := make([]byte, 0)
+
+	if _, err := os.Stat(filepath); err != nil {
+		fmt.Printf("Could not stat MGH file '%s'\n.", filepath)
+		return bs, err
+	}
+
+	file, err := os.Open(filepath)
+	if err != nil {
+		err := fmt.Errorf("Could not open file MGH file '%s' for reading: %s\n", filepath, err)
+   		return bs, err
+	}
+	defer file.Close()
+
+	// Get the file size
+	stat, err := file.Stat()
+	if err != nil {
+	   fmt.Println (err)
+	   return bs, err
+	}
+	
+	// Read the file into a byte slice, whether gzipped or not.
+	
+	bs = make([]byte, stat.Size())
+	if treatGzipped {
+		gzipReader, err := gzip.NewReader(file)
+		if err != nil {
+			return bs, err
+		}
+		gzipReader.Read(bs)
+		defer gzipReader.Close()
+	} else {
+		_, err := bufio.NewReader(file).Read(bs)
+		if err != nil && err != io.EOF {
+			fmt.Println(err)
+			return bs, err
+		}
+	}
+	return bs, nil
+}
+
+//gzipReader, err := gzip.NewReader(gzippedFile)
+//    defer gzipReader.Close()
+
 // ReadFsMghHeader reads a FreeSurfer MGH file and returns the header as an MghHeader struct.
 //
 // Parameters:
@@ -104,39 +172,17 @@ func getMghDataTypeCode(dtName string) (int32, error) {
 // Returns:
 //  - MghHeader: an MghHeader struct containing the header data
 //  - error: an error if one occurred
-func ReadFsMghHeader(filepath string) (MghHeader, error) {
+func ReadFsMghHeader(filepath string, isGzipped string) (MghHeader, error) {
 	endian := binary.BigEndian
 
 	hdr := MghHeader{}
 
-	if _, err := os.Stat(filepath); err != nil {
-		fmt.Printf("Could not stat MGH file '%s'\n.", filepath)
+	treatGzipped := getIsGzipped(filepath, isGzipped)
+	bs, err := readFileIntoByteSlice(filepath, treatGzipped)
+	if err != nil {
+		err = fmt.Errorf("Could not read file '%s' into byte slice: %s", filepath, err)
 		return hdr, err
 	}
-
-	file, err := os.Open(filepath)
-	if err != nil {
-		err := fmt.Errorf("Could not open file MGH file '%s' for reading: %s\n", filepath, err)
-   		return hdr, err
-	}
-	defer file.Close()
-
-	// Get the file size
-	stat, err := file.Stat()
-	if err != nil {
-	   fmt.Println(err)
-	   return hdr, err
-	}
-
-	// Read the file into a byte slice
-	bs := make([]byte, stat.Size())
-	_, err = bufio.NewReader(file).Read(bs)
-	if err != nil && err != io.EOF {
-	   fmt.Println(err)
-	   return hdr, err
-	}
-
-	// Read the byte slice
 	r := bytes.NewReader(bs)
 
 	if err := binary.Read(r, endian, &hdr); err != nil {
@@ -175,15 +221,15 @@ type Mgh struct {
 	data MghData
 }
 
-func ReadFsMgh(filepath string) (Mgh, error) {
+func ReadFsMgh(filepath string, isGzipped string) (Mgh, error) {
 	var mgh Mgh
-	hdr, err := ReadFsMghHeader(filepath)
+	hdr, err := ReadFsMghHeader(filepath, isGzipped)
 	if err != nil {
 		err := fmt.Errorf("Failed to read MGH header: %s.", err)
 		return mgh, err
 	}
 	mgh.header = hdr
-	data, err := ReadFsMghData(filepath, hdr)
+	data, err := ReadFsMghData(filepath, hdr, isGzipped)
 	if err != nil {
 		err := fmt.Errorf("Failed to read MGH data: %s.", err)
 		return mgh, err
@@ -192,35 +238,36 @@ func ReadFsMgh(filepath string) (Mgh, error) {
 	return mgh, nil
 }
 
-func ReadFsMghData(filepath string, hdr MghHeader) (MghData, error) {
+func ReadFsMghData(filepath string, hdr MghHeader, isGzipped string) (MghData, error) {
 
 	readMghData := MghData{}
 	readMghData.MghDataType = -1
+	treatGzipped := getIsGzipped(filepath, isGzipped)
 	
 	switch dt := hdr.MghDataType; dt {
 	case MRI_INT:
-		arr, err := readFsMghDataMriInt(filepath, hdr)
+		arr, err := readFsMghDataMriInt(filepath, hdr, treatGzipped)
 		if err != nil {
 			err := fmt.Errorf("Failed to read MRI_INT data from MGH file '%s': %s.\n", filepath, err)
 			return readMghData, err
 		}
 		readMghData.DataMriInt = arr
 	case MRI_FLOAT:
-		arr, err := readFsMghDataMriFloat(filepath, hdr)
+		arr, err := readFsMghDataMriFloat(filepath, hdr, treatGzipped)
 		if err != nil {
 			err := fmt.Errorf("Failed to read MRI_FLOAT data from MGH file '%s': %s.\n", filepath, err)
 			return readMghData, err
 		}
 		readMghData.DataMriFloat = arr
 	case MRI_UCHAR:
-		arr, err := readFsMghDataMriUchar(filepath, hdr)
+		arr, err := readFsMghDataMriUchar(filepath, hdr, treatGzipped)
 		if err != nil {
 			err := fmt.Errorf("Failed to read MRI_UCHAR data from MGH file '%s': %s.\n", filepath, err)
 			return readMghData, err
 		}
 		readMghData.DataMriUchar = arr
 	case MRI_SHORT:
-		arr, err := readFsMghDataMriShort(filepath, hdr)
+		arr, err := readFsMghDataMriShort(filepath, hdr, treatGzipped)
 		if err != nil {
 			err := fmt.Errorf("Failed to read MRI_SHORT data from MGH file '%s': %s.\n", filepath, err)
 			return readMghData, err
@@ -235,38 +282,18 @@ func ReadFsMghData(filepath string, hdr MghHeader) (MghData, error) {
 
 
 // readFsMghDataMriInt reads the MRI_INT data array part of an MGH format file.
-func readFsMghDataMriInt(filepath string, hdr MghHeader) ([]int32, error) {
+func readFsMghDataMriInt(filepath string, hdr MghHeader, treatGzipped bool) ([]int32, error) {
 
 	var numValues int64 = (int64)(hdr.Dim1Length * hdr.Dim2Length * hdr.Dim3Length * hdr.Dim4Length)
 	dataArr := make([]int32, numValues)
 	var mghDataType string = "MRI_INT"
 
 	endian := binary.BigEndian
-	if _, err := os.Stat(filepath); err != nil {
-		err := fmt.Errorf("ReadFsMghData: Could not stat MGH file '%s': %s\n.", filepath, err)
+
+	bs, err := readFileIntoByteSlice(filepath, treatGzipped)
+	if err != nil {
+		err = fmt.Errorf("Could not read file '%s' into byte slice: %s", filepath, err)
 		return dataArr, err
-	}
-
-	file, err := os.Open(filepath)
-	if err != nil {
-		err := fmt.Errorf("ReadFsMghData: Could not open file MGH file '%s' for reading: %s\n", filepath, err)
-   		return dataArr, err
-	}
-	defer file.Close()
-
-	// Get the file size
-	stat, err := file.Stat()
-	if err != nil {
-	   fmt.Println(err)
-	   return dataArr, err
-	}
-
-	// Read the file into a byte slice
-	bs := make([]byte, stat.Size())
-	_, err = bufio.NewReader(file).Read(bs)
-	if err != nil && err != io.EOF {
-	   fmt.Println(err)
-	   return dataArr, err
 	}
 
 	// Read the byte slice
@@ -290,40 +317,18 @@ func readFsMghDataMriInt(filepath string, hdr MghHeader) ([]int32, error) {
 }
 
 // readFsMghDataMriFloat reads the MRI_FLOAT data array part of an MGH format file.
-func readFsMghDataMriFloat(filepath string, hdr MghHeader) ([]float32, error) {
+func readFsMghDataMriFloat(filepath string, hdr MghHeader, treatGzipped bool) ([]float32, error) {
 
 	var numValues int64 = (int64)(hdr.Dim1Length * hdr.Dim2Length * hdr.Dim3Length * hdr.Dim4Length)
 	dataArr := make([]float32, numValues)
 	var mghDataType string = "MRI_FLOAT"
 
 	endian := binary.BigEndian
-	if _, err := os.Stat(filepath); err != nil {
-		err := fmt.Errorf("ReadFsMghData: Could not stat MGH file '%s': %s\n.", filepath, err)
+	bs, err := readFileIntoByteSlice(filepath, treatGzipped)
+	if err != nil {
+		err = fmt.Errorf("Could not read file '%s' into byte slice: %s", filepath, err)
 		return dataArr, err
 	}
-
-	file, err := os.Open(filepath)
-	if err != nil {
-		err := fmt.Errorf("ReadFsMghData: Could not open file MGH file '%s' for reading: %s\n", filepath, err)
-   		return dataArr, err
-	}
-	defer file.Close()
-
-	// Get the file size
-	stat, err := file.Stat()
-	if err != nil {
-	   fmt.Println(err)
-	   return dataArr, err
-	}
-
-	// Read the file into a byte slice
-	bs := make([]byte, stat.Size())
-	_, err = bufio.NewReader(file).Read(bs)
-	if err != nil && err != io.EOF {
-	   fmt.Println(err)
-	   return dataArr, err
-	}
-
 	// Read the byte slice
 	r := bytes.NewReader(bs)
 
@@ -346,40 +351,18 @@ func readFsMghDataMriFloat(filepath string, hdr MghHeader) ([]float32, error) {
 
 
 // readFsMghDataMriuchar reads the MRI_UCHAR data array part of an MGH format file.
-func readFsMghDataMriUchar(filepath string, hdr MghHeader) ([]uint8, error) {
+func readFsMghDataMriUchar(filepath string, hdr MghHeader, treatGzipped bool) ([]uint8, error) {
 
 	var numValues int64 = (int64)(hdr.Dim1Length * hdr.Dim2Length * hdr.Dim3Length * hdr.Dim4Length)
 	dataArr := make([]uint8, numValues)
 	var mghDataType string = "MRI_UCHAR"
 
 	endian := binary.BigEndian
-	if _, err := os.Stat(filepath); err != nil {
-		err := fmt.Errorf("ReadFsMghData: Could not stat MGH file '%s': %s\n.", filepath, err)
+	bs, err := readFileIntoByteSlice(filepath, treatGzipped)
+	if err != nil {
+		err = fmt.Errorf("Could not read file '%s' into byte slice: %s", filepath, err)
 		return dataArr, err
 	}
-
-	file, err := os.Open(filepath)
-	if err != nil {
-		err := fmt.Errorf("ReadFsMghData: Could not open file MGH file '%s' for reading: %s\n", filepath, err)
-   		return dataArr, err
-	}
-	defer file.Close()
-
-	// Get the file size
-	stat, err := file.Stat()
-	if err != nil {
-	   fmt.Println(err)
-	   return dataArr, err
-	}
-
-	// Read the file into a byte slice
-	bs := make([]byte, stat.Size())
-	_, err = bufio.NewReader(file).Read(bs)
-	if err != nil && err != io.EOF {
-	   fmt.Println(err)
-	   return dataArr, err
-	}
-
 	// Read the byte slice
 	r := bytes.NewReader(bs)
 
@@ -402,38 +385,18 @@ func readFsMghDataMriUchar(filepath string, hdr MghHeader) ([]uint8, error) {
 
 
 // readFsMghDataMrishort reads the MRI_SHORT data array part of an MGH format file.
-func readFsMghDataMriShort(filepath string, hdr MghHeader) ([]int16, error) {
+func readFsMghDataMriShort(filepath string, hdr MghHeader, treatGzipped bool) ([]int16, error) {
 
 	var numValues int64 = (int64)(hdr.Dim1Length * hdr.Dim2Length * hdr.Dim3Length * hdr.Dim4Length)
 	dataArr := make([]int16, numValues)
 	var mghDataType string = "MRI_SHORT"
 
 	endian := binary.BigEndian
-	if _, err := os.Stat(filepath); err != nil {
-		err := fmt.Errorf("ReadFsMghDataMriShort: Could not stat MGH file '%s': %s\n.", filepath, err)
+
+	bs, err := readFileIntoByteSlice(filepath, treatGzipped)
+	if err != nil {
+		err = fmt.Errorf("Could not read file '%s' into byte slice: %s", filepath, err)
 		return dataArr, err
-	}
-
-	file, err := os.Open(filepath)
-	if err != nil {
-		err := fmt.Errorf("ReadFsMghDataMriShort: Could not open file MGH file '%s' for reading: %s\n", filepath, err)
-   		return dataArr, err
-	}
-	defer file.Close()
-
-	// Get the file size
-	stat, err := file.Stat()
-	if err != nil {
-	   fmt.Println(err)
-	   return dataArr, err
-	}
-
-	// Read the file into a byte slice
-	bs := make([]byte, stat.Size())
-	_, err = bufio.NewReader(file).Read(bs)
-	if err != nil && err != io.EOF {
-	   fmt.Println(err)
-	   return dataArr, err
 	}
 
 	// Read the byte slice
