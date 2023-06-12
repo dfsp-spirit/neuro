@@ -118,18 +118,19 @@ func getIsGzipped(filepath string, is_gzipped string) (bool) {
 	}
 }
 
+// readFileIntoByteSlice reads a file from disk into a byte slice. Supports uncompressed or gzip format.
 func readFileIntoByteSlice(filepath string, treatGzipped bool) ([]byte, error) {
 	
 	bs := make([]byte, 0)
 
 	if _, err := os.Stat(filepath); err != nil {
-		fmt.Printf("Could not stat MGH file '%s'\n.", filepath)
+		fmt.Printf("Could not stat file '%s'\n.", filepath)
 		return bs, err
 	}
 
 	file, err := os.Open(filepath)
 	if err != nil {
-		err := fmt.Errorf("Could not open file MGH file '%s' for reading: %s\n", filepath, err)
+		err := fmt.Errorf("Could not open file file '%s' for reading: %s\n", filepath, err)
    		return bs, err
 	}
 	defer file.Close()
@@ -137,20 +138,23 @@ func readFileIntoByteSlice(filepath string, treatGzipped bool) ([]byte, error) {
 	// Get the file size
 	stat, err := file.Stat()
 	if err != nil {
-	   fmt.Println (err)
+	   fmt.Println(err)
 	   return bs, err
 	}
 	
 	// Read the file into a byte slice, whether gzipped or not.
-	
 	bs = make([]byte, stat.Size())
 	if treatGzipped {
 		gzipReader, err := gzip.NewReader(file)
 		if err != nil {
 			return bs, err
 		}
-		gzipReader.Read(bs)
 		defer gzipReader.Close()
+		//gzipReader.Read(bs)
+		bs, err = io.ReadAll(gzipReader)
+		if err != nil {
+			return bs, err
+		}
 	} else {
 		_, err := bufio.NewReader(file).Read(bs)
 		if err != nil && err != io.EOF {
