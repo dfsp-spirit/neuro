@@ -92,6 +92,13 @@ If you do not have a mesh viewer installed, you can use the web version of MeshL
 go test -v
 ```
 
+If you want to inspect a detailed HTML coverage report in your browser:
+
+```shell
+go test -v -coverprofile cover.out
+go tool cover -html=cover.out
+```
+
 ## Author, License and Getting Help
 
 The `neuro` module for Go was written by [Tim Schäfer](https://ts.rcmd.org).
