@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestReadFsMghHeader(t *testing.T){
+func TestReadFsMghHeader(t *testing.T) {
 	var mghFile string = "testdata/brain.mgh"
 
 	hdr, _ := ReadFsMghHeader(mghFile, "auto")
@@ -19,7 +19,7 @@ func TestReadFsMghHeader(t *testing.T){
 	}
 }
 
-func TestReadFsMghHeaderRAS(t *testing.T){
+func TestReadFsMghHeaderRAS(t *testing.T) {
 	var mghFile string = "testdata/brain.mgh"
 
 	hdr, _ := ReadFsMghHeader(mghFile, "no")
@@ -32,7 +32,7 @@ func TestReadFsMghHeaderRAS(t *testing.T){
 	}
 }
 
-func TestReadFsMghFull(t *testing.T){
+func TestReadFsMghFull(t *testing.T) {
 	var mghFile string = "testdata/brain.mgh"
 
 	mgh, _ := ReadFsMgh(mghFile, "auto")
@@ -45,7 +45,7 @@ func TestReadFsMghFull(t *testing.T){
 	}
 }
 
-func TestReadFsMghFullAt0000(t *testing.T){
+func TestReadFsMghFullAt0000(t *testing.T) {
 	var mghFile string = "testdata/brain.mgh"
 
 	mgh, _ := ReadFsMgh(mghFile, "no")
@@ -58,7 +58,7 @@ func TestReadFsMghFullAt0000(t *testing.T){
 	}
 }
 
-func TestReadFsMghFullSum(t *testing.T){
+func TestReadFsMghFullSum(t *testing.T) {
 	var mghFile string = "testdata/brain.mgh"
 
 	mgh, _ := ReadFsMgh(mghFile, "no")
@@ -68,14 +68,14 @@ func TestReadFsMghFullSum(t *testing.T){
 		sum += int(voxel_val)
 	}
 	var got = sum
-	var want int = 121035479  // known from external tests with standard software.
+	var want int = 121035479 // known from external tests with standard software.
 
 	if got != want {
 		t.Errorf("got MGH data sum=%d, wanted %d", got, want)
 	}
 }
 
-func TestReadFsMgzFullSum(t *testing.T){
+func TestReadFsMgzFullSum(t *testing.T) {
 	var mgzFile string = "testdata/brain.mgz"
 
 	mgh, _ := ReadFsMgh(mgzFile, "yes")
@@ -85,13 +85,26 @@ func TestReadFsMgzFullSum(t *testing.T){
 		sum += int(voxel_val)
 	}
 	var got = sum
-	var want int = 121035479  // known from external tests with standard software.
+	var want int = 121035479 // known from external tests with standard software.
 
 	if got != want {
 		t.Errorf("got MGH data sum=%d, wanted %d", got, want)
 	}
 }
 
+func TestReadFsMghPervertex(t *testing.T) {
+	var mgzFile string = "testdata/lh.thickness.fwhm5.fsaverage.mgh"
+
+	mgh, _ := ReadFsMgh(mgzFile, "auto")
+
+	mean_thickness, _ := mean(mgh.data.DataMriFloat)
+
+	lower_border := 2.31
+	upper_border := 2.33
+	if mean_thickness < float32(lower_border) || mean_thickness > float32(upper_border) {
+		t.Errorf("got mean thickness=%f, wanted between %f and %f", mean_thickness, lower_border, upper_border)
+	}
+}
 
 // The indices in the following lines from R code are 1-based, so substract 1 from them for Golang.
 //  expect_equal(vd[100, 100, 100, 1], 77);      # try on command line: mri_info --voxel 99 99 99 inst/extdata/brain.mgz
