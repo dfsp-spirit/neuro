@@ -86,7 +86,7 @@ If you do not have a mesh viewer installed, you can use the web version of MeshL
 ![Vis](./lhwhite.jpg?raw=true "Visualization of the demo brain mesh.")
 
 
-### Running the unit tests
+### Running the unit tests locally
 
 ```shell
 go test -v
@@ -99,11 +99,19 @@ go test -v -coverprofile cover.out
 go tool cover -html=cover.out
 ```
 
+### Continuous Integration (CI)
+
+<!-- badges: start -->
+[![Main branch on Github Actions]](https://github.com/esi-neuroscience/syncopy/actions/workflows/cov_test_workflow.yml/badge.svg?branch=main)(https://github.com/esi-neuroscience/syncopy/actions/workflows/cov_test_workflow.yml)
+<!-- badges: end -->
+
+
+
 ## Author, License and Getting Help
 
 The `neuro` module for Go was written by [Tim Schäfer](https://ts.rcmd.org).
 
-It is free software, published under the very permissive [MIT license](./LICENSE)
+It is free software, published under the very permissive [MIT license](./LICENSE).
 
 Note that this library is **not** a part of FreeSurfer, and it is **in no way** endorsed by the FreeSurfer developers. Please do not contact them regarding this library, especially not for support. [Open an issue](https://github.com/dfsp-spirit/neuro/issues) in this repo instead.
 
