@@ -7,10 +7,11 @@ import (
 	"github.com/google/go-cmp/cmp"
 )
 
-func TestWriteRereadCurv(t *testing.T){
+func TestWriteRereadCurv(t *testing.T) {
 
 	data := []float32{1.0, 2.0, 3.0, 4.0, 5.0}
 
+	// get a temp file.
 	file, err := os.CreateTemp("", "")
 	if err != nil {
 		t.Errorf("CreateTemp failed: %v", err)
@@ -19,7 +20,7 @@ func TestWriteRereadCurv(t *testing.T){
 	curv_file_name := file.Name()
 	file.Close()
 
-    err = WriteFsCurv(curv_file_name, data)
+	err = WriteFsCurv(curv_file_name, data)
 	if err != nil {
 		t.Errorf("WriteFsCurv failed: %v", err)
 	}
@@ -28,8 +29,7 @@ func TestWriteRereadCurv(t *testing.T){
 		t.Errorf("ReadFsCurv failed: %v", err)
 	}
 
-
-    if diff := cmp.Diff(data, data_reread); diff != "" {
-        t.Error(diff)
-    }
+	if diff := cmp.Diff(data, data_reread); diff != "" {
+		t.Error(diff)
+	}
 }
