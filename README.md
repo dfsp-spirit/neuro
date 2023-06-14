@@ -102,9 +102,8 @@ go tool cover -html=cover.out
 ### Continuous Integration (CI)
 
 <!-- badges: start -->
-[![Main branch on Github Actions](https://github.com/esi-neuroscience/syncopy/actions/workflows/cov_test_workflow.yml/badge.svg?branch=main)](https://github.com/esi-neuroscience/syncopy/actions/workflows/cov_test_workflow.yml)
+[![Main branch on Github Actions](https://github.com/dfsp-spirit/neuro/actions/workflows/unittests.yml/badge.svg?branch=main)](https://github.com/dfsp-spirit/neuro/actions/workflows/unittests.yml)
 <!-- badges: end -->
-
 
 
 ## Author, License and Getting Help
