@@ -115,6 +115,15 @@ It is free software, published under the very permissive [MIT license](./LICENSE
 Note that this library is **not** a part of FreeSurfer, and it is **in no way** endorsed by the FreeSurfer developers. Please do not contact them regarding this library, especially not for support. [Open an issue](https://github.com/dfsp-spirit/neuro/issues) in this repo instead.
 
 
+### TODO and planned for next releases
+
+[] Add consistent logging
+[] Support reading labels (like cortex label in `<subject>/label/lh.cortex.label`)
+[] Support reading annots (brain surface parcellations, like Desikan-Killiani in `<subject>/label/lh.aparc.annot`)
+[] write support for MGH format
+
+If you need any of these, or something else, urgently, please open an issue. It's no big deal to add it.
+
 ### Related packages
 
 * [github.com/okieraised/gonii](https://github.com/okieraised/gonii): Standalone, pure golang NIfTI file parser by Thomas Pham. I have not tried it yet, but it seems to be the most popular Golang NIfTI reader, and the NIfTI format is a more common alternative to MGH/MGZ, used by many neuroimaging software packages. One can, of course, convert between NIfTI and MGH/MGZ on the command line with standard FreeSurfer tools like `mri_convert`. 
