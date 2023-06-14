@@ -1,7 +1,5 @@
 package neuro
 
-// Related software: libfs for C++, see:
-// https://github.com/dfsp-spirit/libfs/blob/main/include/libfs.h#L2023 for the fs surface file format
 
 import (
 	"bufio"
@@ -165,9 +163,6 @@ func readFileIntoByteSlice(filepath string, treatGzipped bool) ([]byte, error) {
 	return bs, nil
 }
 
-//gzipReader, err := gzip.NewReader(gzippedFile)
-//    defer gzipReader.Close()
-
 // ReadFsMghHeader reads a FreeSurfer MGH file and returns the header as an MghHeader struct.
 //
 // Parameters:
@@ -292,7 +287,7 @@ func readFsMghDataMriInt(filepath string, hdr MghHeader, treatGzipped bool) ([]i
 	dataArr := make([]int32, numValues)
 	var mghDataType string = "MRI_INT"
 
-	if Verbosity >= 0 {
+	if Verbosity >= 1 {
 		fmt.Printf("Reading %d values of type %s from MGH file '%s', treatGzipped=%t\n", numValues, mghDataType, filepath, treatGzipped)
 	}
 
@@ -331,7 +326,7 @@ func readFsMghDataMriFloat(filepath string, hdr MghHeader, treatGzipped bool) ([
 	dataArr := make([]float32, numValues)
 	var mghDataType string = "MRI_FLOAT"
 
-	if Verbosity >= 0 {
+	if Verbosity >= 1 {
 		fmt.Printf("Reading %d values of type %s from MGH file '%s', treatGzipped=%t\n", numValues, mghDataType, filepath, treatGzipped)
 	}
 
@@ -368,7 +363,7 @@ func readFsMghDataMriUchar(filepath string, hdr MghHeader, treatGzipped bool) ([
 	dataArr := make([]uint8, numValues)
 	var mghDataType string = "MRI_UCHAR"
 
-	if Verbosity >= 0 {
+	if Verbosity >= 1 {
 		fmt.Printf("Reading %d values of type %s from MGH file '%s', treatGzipped=%t\n", numValues, mghDataType, filepath, treatGzipped)
 	}
 
@@ -406,7 +401,7 @@ func readFsMghDataMriShort(filepath string, hdr MghHeader, treatGzipped bool) ([
 	dataArr := make([]int16, numValues)
 	var mghDataType string = "MRI_SHORT"
 
-	if Verbosity >= 0 {
+	if Verbosity >= 1 {
 		fmt.Printf("Reading %d values of type %s from MGH file '%s', treatGzipped=%t\n", numValues, mghDataType, filepath, treatGzipped)
 	}
 
