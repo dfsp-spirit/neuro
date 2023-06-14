@@ -102,7 +102,7 @@ go tool cover -html=cover.out
 ### Continuous Integration (CI)
 
 <!-- badges: start -->
-[![Main branch on Github Actions]](https://github.com/esi-neuroscience/syncopy/actions/workflows/cov_test_workflow.yml/badge.svg?branch=main)(https://github.com/esi-neuroscience/syncopy/actions/workflows/cov_test_workflow.yml)
+[![Main branch on Github Actions](https://github.com/esi-neuroscience/syncopy/actions/workflows/cov_test_workflow.yml/badge.svg?branch=main)](https://github.com/esi-neuroscience/syncopy/actions/workflows/cov_test_workflow.yml)
 <!-- badges: end -->
 
 
