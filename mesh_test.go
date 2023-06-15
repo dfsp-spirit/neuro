@@ -86,7 +86,13 @@ func TestCubeVertices(t *testing.T) {
 	if gotNumVertices != wantNumVertices {
 		t.Errorf("got NumVertices %d, wanted %d", gotNumVertices, wantNumVertices)
 	}
+}
 
+func ExampleGenerateCube() {
+
+	var mycube Mesh = GenerateCube()
+	fmt.Printf("Cube mesh has %d vertices and %d faces.\n", NumVertices(mycube), NumFaces(mycube))
+	// Output: Cube mesh has 8 vertices and 12 faces.
 }
 
 func TestMeshStats(t *testing.T) {
@@ -142,6 +148,52 @@ func ExampleMesh() {
 	nf := NumFaces(mycube)
 	fmt.Printf("Cube mesh has %d vertices and %d faces.\n", nv, nf)
 	// Output: Cube mesh has 8 vertices and 12 faces.
+}
+
+func ExampleNumVertices() {
+	var mycube Mesh = GenerateCube()
+	nv := NumVertices(mycube)
+	nf := NumFaces(mycube)
+	fmt.Printf("Cube mesh has %d vertices and %d faces.\n", nv, nf)
+	// Output: Cube mesh has 8 vertices and 12 faces.
+}
+
+func ExampleNumFaces() {
+	var mycube Mesh = GenerateCube()
+	nv := NumVertices(mycube)
+	nf := NumFaces(mycube)
+	fmt.Printf("Cube mesh has %d vertices and %d faces.\n", nv, nf)
+	// Output: Cube mesh has 8 vertices and 12 faces.
+}
+
+func ExampleToPlyFormat() {
+	var mycube Mesh = GenerateCube()
+	ply_str, err := ToPlyFormat(mycube)
+	if err != nil {
+		fmt.Printf("Error getting PLY representation: %s\n", err)
+	}
+	fmt.Printf("PLY format string has %d lines.\n", strings.Count(ply_str, "\n"))
+	// Output: PLY format string has 30 lines.
+}
+
+func ExampleToObjFormat() {
+	var mycube Mesh = GenerateCube()
+	obj_str, err := ToObjFormat(mycube)
+	if err != nil {
+		fmt.Printf("Error getting OBJ representation: %s\n", err)
+	}
+	fmt.Printf("OBJ format string has %d lines.\n", strings.Count(obj_str, "\n"))
+	// Output: OBJ format string has 21 lines.
+}
+
+func ExampleToStlFormat() {
+	var mycube Mesh = GenerateCube()
+	stl_str, err := ToStlFormat(mycube)
+	if err != nil {
+		fmt.Printf("Error getting STL representation: %s\n", err)
+	}
+	fmt.Printf("STL format string has %d lines.\n", strings.Count(stl_str, "\n"))
+	// Output: STL format string has 86 lines.
 }
 
 func ExampleMesh_fromData() {

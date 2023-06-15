@@ -21,11 +21,15 @@ This repo contains a very early version of a [Go](https://go.dev/) module for re
 
 ## Usage
 
-Not yet.
+### Installation
 
-The module is far from ready and has not been published yet, so you cannot `go get` it right now.
+```shell
+go get github.com/dfsp-spirit/neuro
+```
 
-All information below is developer information, i.e., intended for people who want to try the development version, typically to work on it.
+### Full Documentation including usage examples
+
+The full documentation can be found on the central go documentation page at [pkg.go.dev](https://pkg.go.dev/github.com/dfsp-spirit/neuro#section-documentation).
 
 
 ## Development information
@@ -117,10 +121,10 @@ Note that this library is **not** a part of FreeSurfer, and it is **in no way** 
 
 ### TODO and planned for next releases
 
-[] Add consistent logging
-[] Support reading labels (like cortex label in `<subject>/label/lh.cortex.label`)
-[] Support reading annots (brain surface parcellations, like Desikan-Killiani in `<subject>/label/lh.aparc.annot`)
-[] write support for MGH format
+[ ] Add consistent logging
+[ ] Support reading labels (like cortex label in `<subject>/label/lh.cortex.label`)
+[ ] Support reading annots (brain surface parcellations, like Desikan-Killiani in `<subject>/label/lh.aparc.annot`)
+[ ] write support for MGH format
 
 If you need any of these, or something else, urgently, please open an issue. It's no big deal to add it.
 
