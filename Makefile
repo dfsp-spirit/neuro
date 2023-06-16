@@ -18,4 +18,9 @@ run_mgh:
 run_mgz:
 	go run cmd/example_mgh/example_mgh.go --mghfile testdata/brain.mgz --informat "auto"
 
+run_all:
+	make run_surf
+	make run_curv
+	make run_mgh
+
 all: build
