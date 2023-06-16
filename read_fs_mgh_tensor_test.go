@@ -15,9 +15,9 @@ func ExampleReadFsMgh_tensor() {
 	var mgzFile string = "testdata/brain.mgz"
 
 	mgh, _ := ReadFsMgh(mgzFile, "yes")
-	var h MghHeader = mgh.header
+	var h MghHeader = mgh.Header
 
-	data := tensor.New(tensor.WithShape(int(h.Dim1Length), int(h.Dim2Length), int(h.Dim3Length), int(h.Dim4Length)), tensor.WithBacking(mgh.data.DataMriUchar))
+	data := tensor.New(tensor.WithShape(int(h.Dim1Length), int(h.Dim2Length), int(h.Dim3Length), int(h.Dim4Length)), tensor.WithBacking(mgh.Data.DataMriUchar))
 	val1, _ := data.At(99, 99, 99, 0)    // 77
 	val2, _ := data.At(109, 109, 109, 0) // 71
 	val3, _ := data.At(0, 0, 0, 0)       // 0

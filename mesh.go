@@ -327,3 +327,45 @@ func GenerateCube() Mesh {
 		7, 3, 1}
 	return mesh
 }
+
+// GenerateSphere creates and returns a Mesh representing a sphere.
+//
+// This is mainly used in the examples and documenation.
+//
+// Parameters:
+//   - radius : the radius of the sphere
+//   - slices : the number of slices (horizontal divisions)
+//   - stacks : the number of stacks (vertical divisions)
+//
+// Returns:
+//   - Mesh : the sphere mesh
+func GenerateSphere(radius float32, slices int, stacks int) Mesh {
+
+	var mesh Mesh
+
+	// generate vertices
+	for i := 0; i <= stacks; i++ {
+		phi := float32(i) * math.Pi / float32(stacks)
+		for j := 0; j <= slices; j++ {
+			theta := float32(j) * 2 * math.Pi / float32(slices)
+			x := radius * float32(math.Cos(float64(theta))) * float32(math.Sin(float64(phi)))
+			y := radius * float32(math.Sin(float64(theta))) * float32(math.Sin(float64(phi)))
+			z := radius * float32(math.Cos(float64(phi)))
+			mesh.Vertices = append(mesh.Vertices, x, y, z)
+		}
+	}
+
+	// generate faces
+	for i := 0; i < stacks; i++ {
+		for j := 0; j < slices; j++ {
+			mesh.Faces = append(mesh.Faces, int32((i+1)*(slices+1)+j))
+			mesh.Faces = append(mesh.Faces, int32(i*(slices+1)+j))
+			mesh.Faces = append(mesh.Faces, int32(i*(slices+1)+j+1))
+			mesh.Faces = append(mesh.Faces, int32((i+1)*(slices+1)+j))
+			mesh.Faces = append(mesh.Faces, int32(i*(slices+1)+j+1))
+			mesh.Faces = append(mesh.Faces, int32((i+1)*(slices+1)+j+1))
+		}
+	}
+
+	return mesh
+}

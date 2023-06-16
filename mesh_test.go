@@ -227,8 +227,8 @@ func ExampleMeshStats_fromSurfaceFileVerts() {
 
 func TestToPlyFormat(t *testing.T) {
 
-	var mycube Mesh = GenerateCube()
-	repr_ply, _ := ToPlyFormat(mycube)
+	var myCube Mesh = GenerateCube()
+	repr_ply, _ := ToPlyFormat(myCube)
 
 	got := strings.Count(repr_ply, "\n")
 	want := 30
@@ -240,8 +240,8 @@ func TestToPlyFormat(t *testing.T) {
 
 func TestToStlFormat(t *testing.T) {
 
-	var mycube Mesh = GenerateCube()
-	repr_stl, _ := ToStlFormat(mycube)
+	var myCube Mesh = GenerateCube()
+	repr_stl, _ := ToStlFormat(myCube)
 
 	got := strings.Count(repr_stl, "\n")
 	want := 86
@@ -265,18 +265,39 @@ func TestToObjFormat(t *testing.T) {
 }
 
 func TestExport(t *testing.T) {
-	var mycube Mesh = GenerateCube()
+	var myCube Mesh = GenerateCube()
 	// get a temp file.
 	file, err := os.CreateTemp("", "")
 	if err != nil {
 		t.Errorf("CreateTemp failed: %v", err)
 	}
-	defer os.Remove(file.Name()) // clean up
 	mesh_out_filename := file.Name()
+	defer os.Remove(mesh_out_filename) // clean up
 	file.Close()
 
 	// export to tmp file.
-	Export(mycube, mesh_out_filename, "ply")
-	Export(mycube, mesh_out_filename, "stl")
-	Export(mycube, mesh_out_filename, "obj")
+	Export(myCube, mesh_out_filename, "ply")
+	Export(myCube, mesh_out_filename, "stl")
+	Export(myCube, mesh_out_filename, "obj")
+
+	//Export(myCube, "cube.ply", "ply")
+}
+
+func TestExport_Sphere(t *testing.T) {
+	var mySphere Mesh = GenerateSphere(1.0, 20, 20)
+	// get a temp file.
+	file, err := os.CreateTemp("", "")
+	if err != nil {
+		t.Errorf("CreateTemp failed: %v", err)
+	}
+	mesh_out_filename := file.Name()
+	defer os.Remove(mesh_out_filename) // clean up
+	file.Close()
+
+	// export to tmp file.
+	Export(mySphere, mesh_out_filename, "ply")
+	Export(mySphere, mesh_out_filename, "stl")
+	Export(mySphere, mesh_out_filename, "obj")
+
+	//Export(mySphere, "sphere.ply", "ply")
 }

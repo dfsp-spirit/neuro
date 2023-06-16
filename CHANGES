@@ -1,0 +1,25 @@
+neuro Changes
+=============
+
+
+Current WIP
+-----------
+NEW:
+- Add lots of documentation, including more detailed doc strings and a full MGH/MGZ demo application.
+- Add a changelog in file CHANGES (this file)
+
+FIXED:
+- The `Mgh` struct now has public fields `Header` and `Data`, instead of private fields `header` and `data`.
+
+CHANGED:
+- The parameter `isGzipped` of functions `ReadFsMgh`, `ReadFsMghHeader` and `ReadFsMghData` now additionally accepts the strings `'mgh'` (alias for `'no'`) and `'mgz'` (alias for `'yes'`). This change is backwards compatible.
+
+
+Version 0.1.0 -- Initial release
+--------------------------------
+- Support for reading FreeSurfer curv file format
+- Support for writing FreeSurfer curv file format
+- Support for reading FreeSurfer MGH file format
+- Support for reading FreeSurfer MGZ file format
+- Support for reading FreeSurfer surface file format (brain meshes)
+- Support for computation of some simple mesh properties

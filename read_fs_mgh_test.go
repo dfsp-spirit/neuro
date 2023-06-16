@@ -35,9 +35,9 @@ func TestReadFsMghHeaderRAS(t *testing.T) {
 func TestReadFsMghFull(t *testing.T) {
 	var mghFile string = "testdata/brain.mgh"
 
-	mgh, _ := ReadFsMgh(mghFile, "auto")
+	mgh, _ := ReadFsMgh(mghFile, "mgh")
 
-	got := mgh.header.RasGoodFlag
+	got := mgh.Header.RasGoodFlag
 	var want int16 = 1
 
 	if got != want {
@@ -50,7 +50,7 @@ func TestReadFsMghFullAt0000(t *testing.T) {
 
 	mgh, _ := ReadFsMgh(mghFile, "no")
 
-	got := mgh.data.DataMriUchar[0]
+	got := mgh.Data.DataMriUchar[0]
 	var want uint8 = 0
 
 	if got != want {
@@ -64,7 +64,7 @@ func TestReadFsMghFullSum(t *testing.T) {
 	mgh, _ := ReadFsMgh(mghFile, "no")
 
 	var sum int = 0
-	for _, voxel_val := range mgh.data.DataMriUchar {
+	for _, voxel_val := range mgh.Data.DataMriUchar {
 		sum += int(voxel_val)
 	}
 	var got = sum
@@ -81,7 +81,24 @@ func TestReadFsMgzFullSum(t *testing.T) {
 	mgh, _ := ReadFsMgh(mgzFile, "yes")
 
 	var sum int = 0
-	for _, voxel_val := range mgh.data.DataMriUchar {
+	for _, voxel_val := range mgh.Data.DataMriUchar {
+		sum += int(voxel_val)
+	}
+	var got = sum
+	var want int = 121035479 // known from external tests with standard software.
+
+	if got != want {
+		t.Errorf("got MGH data sum=%d, wanted %d", got, want)
+	}
+}
+
+func TestReadFsMgzFullSumisGzippedMgz(t *testing.T) {
+	var mgzFile string = "testdata/brain.mgz"
+
+	mgh, _ := ReadFsMgh(mgzFile, "mgz") // Use 'mgz' for isGzipped
+
+	var sum int = 0
+	for _, voxel_val := range mgh.Data.DataMriUchar {
 		sum += int(voxel_val)
 	}
 	var got = sum
@@ -97,7 +114,7 @@ func TestReadFsMghPervertex(t *testing.T) {
 
 	mgh, _ := ReadFsMgh(mgzFile, "auto")
 
-	mean_thickness, _ := mean(mgh.data.DataMriFloat)
+	mean_thickness, _ := mean(mgh.Data.DataMriFloat)
 
 	lower_border := 2.31
 	upper_border := 2.33
@@ -105,9 +122,3 @@ func TestReadFsMghPervertex(t *testing.T) {
 		t.Errorf("got mean thickness=%f, wanted between %f and %f", mean_thickness, lower_border, upper_border)
 	}
 }
-
-// The indices in the following lines from R code are 1-based, so substract 1 from them for Golang.
-//  expect_equal(vd[100, 100, 100, 1], 77);      # try on command line: mri_info --voxel 99 99 99 inst/extdata/brain.mgz
-//  expect_equal(vd[110, 110, 110, 1], 71);
-//  expect_equal(vd[1, 1, 1, 1], 0);
-//  expect_equal(sum(vd), 121035479);

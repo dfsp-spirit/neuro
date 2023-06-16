@@ -1,5 +1,6 @@
 # neuro
-Work-in-progress Go module to read structural neuroimaging file formats, ignore for now.
+Go module for reading and writing structural neuroimaging file formats. Supports FreeSurfer MGH, MGZ, and related formats.
+
 
 ## About
 
@@ -27,9 +28,20 @@ This repo contains a very early version of a [Go](https://go.dev/) module for re
 go get github.com/dfsp-spirit/neuro
 ```
 
-### Full Documentation including usage examples
+### Full Documentation including usage examples for functions
 
 The full documentation can be found on the central go documentation page at [pkg.go.dev](https://pkg.go.dev/github.com/dfsp-spirit/neuro#section-documentation).
+
+It includes the full API documentation and usage examples for the functions.
+
+
+### Complete demo applications
+
+Demo applications that use `neuro` are available in the [cmd/](./cmd/) directory:
+
+* A command line app that reads a FreeSurfer mesh and prints some mesh information, like total surface area, average edgle length, etc: [example_surface.go](./cmd/example_surface/example_surface.go)
+* A command line app that reads per-vertex cortical thickness data from a FreeSurfer curv file and exports it to a JSON file: [example_curv.go](./cmd/example_curv/example_curv.go)
+* A command line app that reads a three-dimensional human brain scan (MRI image) from a FreeSurfer MGH file and prints some header data and the value of a voxel: [example_mgh.go](./cmd/example_mgh/example_mgh.go)
 
 
 ## Development information
@@ -103,12 +115,12 @@ go test -v -coverprofile cover.out
 go tool cover -html=cover.out
 ```
 
-### Continuous Integration (CI)
+### Continuous Integration (CI) Results
 
 <!-- badges: start -->
 [![Main branch on Github Actions](https://github.com/dfsp-spirit/neuro/actions/workflows/unittests.yml/badge.svg?branch=main)](https://github.com/dfsp-spirit/neuro/actions/workflows/unittests.yml)
+[![GoDoc](https://godoc.org/github.com/dfsp-spirit/neuro?status.svg)](https://godoc.org/github.com/dfsp-spirit/neuro) [![license](https://img.shields.io/github/license/dfsp-spirit/neuro.svg)](https://github.com/dfsp-spirit/neuro/blob/main/LICENSE)
 <!-- badges: end -->
-
 
 ## Author, License and Getting Help
 
