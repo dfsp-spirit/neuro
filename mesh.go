@@ -296,7 +296,7 @@ func NumFaces(mesh Mesh) int {
 
 // GenerateCube creates and returns a Mesh representing a cube.
 //
-// This is mainly used in the examples and documenation.
+// This is mainly used in the examples and documentation.
 //
 // Returns:
 //   - Mesh : the cube mesh
@@ -330,7 +330,7 @@ func GenerateCube() Mesh {
 
 // GenerateSphere creates and returns a Mesh representing a sphere.
 //
-// This is mainly used in the examples and documenation.
+// This is mainly used in the examples and documentation.
 //
 // Parameters:
 //   - radius : the radius of the sphere
