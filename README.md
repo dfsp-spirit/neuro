@@ -62,10 +62,3 @@ The `neuro` module for Go was written by [Tim Schäfer](https://ts.rcmd.org).
 It is free software, published under the very permissive [MIT license](./LICENSE).
 
 Note that this library is **not** a part of FreeSurfer, and it is **in no way** endorsed by the FreeSurfer developers. Please do not contact them regarding this library, especially not for support. [Open an issue](https://github.com/dfsp-spirit/neuro/issues) in this repo instead.
-
-
-### Related packages
-
-* [github.com/okieraised/gonii](https://github.com/okieraised/gonii): Standalone, pure golang NIfTI file parser by Thomas Pham. I have not tried it yet, but it seems to be the most popular Golang NIfTI reader, and the NIfTI format is a more common alternative to MGH/MGZ, used by many neuroimaging software packages. One can, of course, convert between NIfTI and MGH/MGZ on the command line with standard FreeSurfer tools like `mri_convert`. 
-* [github.com/dfsp-spirit/libfs](https://github.com/dfsp-spirit/libfs): A portable, header-only, single file, no-dependency, mildly templated, C++11 library for accessing FreeSurfer neuroimaging file formats by Tim Schäfer (me). File format information used in `neuro` comes from `libfs`, and the APIs are similar. Note though that `neuro` is a separate pure Go implementation, not a wrapper around `libfs`. 
-
