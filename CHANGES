@@ -2,8 +2,8 @@ neuro Changes
 =============
 
 
-Current WIP
------------
+v0.1.1 -- Improved docs and Mgh struct fix
+------------------------------------------
 NEW:
 - Add lots of documentation, including more detailed doc strings and a full MGH/MGZ demo application.
 - Add a changelog in file CHANGES (this file)
