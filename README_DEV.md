@@ -83,7 +83,8 @@ go tool cover -html=cover.out
 This is not officially supported and we cannot help with any issues you encounter, but the installation of Go under Windows is straight-forward. There is an official installer on the golang website, just run it and you should be fine. If your path is setup correctly, you should be able to build in your clone of the repo:
 
 ```shell
-go build cmd\\example_surface\\example_surface.go
+# in your local copy of the repo
+go build cmd\example_surface\example_surface.go
 ```
 
 The installer mentioned above will not install `make` though. While `make` is optional, it is definitely convenient to have it. If you are building stuff under Windows, chances are you already have conda installed. If so, it is easy to install `make` from MinGW using `conda`:
