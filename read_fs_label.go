@@ -1,14 +1,10 @@
 package neuro
 
 import (
-	"bufio"
-	"bytes"
-	"encoding/binary"
+	"encoding/csv"
 	"fmt"
-	"io"
-	"os"
-	"strings"
 	"strconv"
+	"strings"
 )
 
 // Struct modelling a FreeSurfer label.
@@ -70,7 +66,7 @@ func ReadFsLabel(filepath string) (FsLabel, error) {
 	}
 
 	var linesStartingAtThird strings.Builder
-	for line in range lines[2:] {
+	for _, line := range lines[2:] {
 		linesStartingAtThird.WriteString(strings.TrimSpace(line))
 		linesStartingAtThird.WriteString("\n")
 	}
@@ -97,36 +93,54 @@ func ReadFsLabel(filepath string) (FsLabel, error) {
 	label.CoordZ = make([]float32, num_rows)
 	label.Value = make([]float32, num_rows)
 
+	var tmpElementIndex int
+	var tmpfloat float64
+
 	// Read the data and fill in the label struct.
-	for idx, record in range records {
+	for idx, record := range records {
 		if len(record) != 5 {
 			err = fmt.Errorf("readFsLabel: number of columns in label file '%s' record %d is %d, but should be 5.", filepath, idx, len(record))
 			return label, err
 		}
-		label.ElementIndex[idx], err = strconv.Atoi(record[0])
+
+		tmpElementIndex, err = strconv.Atoi(record[0])
 		if err != nil {
 			err = fmt.Errorf("readFsLabel: could not convert element index in label file '%s' record %d to integer: '%s'.", filepath, idx, err)
 			return label, err
+		} else {
+			label.ElementIndex[idx] = int32(tmpElementIndex)
 		}
-		label.CoordX[idx], err = strconv.ParseFloat(record[1], 32)
+
+		tmpfloat, err = strconv.ParseFloat(record[1], 32)
 		if err != nil {
 			err = fmt.Errorf("readFsLabel: could not convert X coordinate in label file '%s' record %d to float32: '%s'.", filepath, idx, err)
 			return label, err
+		} else {
+			label.CoordX[idx] = float32(tmpfloat)
 		}
-		label.CoordY[idx], err = strconv.ParseFloat(record[2], 32)
+
+		tmpfloat, err = strconv.ParseFloat(record[2], 32)
 		if err != nil {
 			err = fmt.Errorf("readFsLabel: could not convert Y coordinate in label file '%s' record %d to float32: '%s'.", filepath, idx, err)
 			return label, err
+		} else {
+			label.CoordY[idx] = float32(tmpfloat)
 		}
-		label.CoordZ[idx], err = strconv.ParseFloat(record[3], 32)
+
+		tmpfloat, err = strconv.ParseFloat(record[3], 32)
 		if err != nil {
 			err = fmt.Errorf("readFsLabel: could not convert Z coordinate in label file '%s' record %d to float32: '%s'.", filepath, idx, err)
 			return label, err
+		} else {
+			label.CoordZ[idx] = float32(tmpfloat)
 		}
-		label.Value[idx], err = strconv.ParseFloat(record[4], 32)
+
+		tmpfloat, err = strconv.ParseFloat(record[4], 32)
 		if err != nil {
 			err = fmt.Errorf("readFsLabel: could not convert value in label file '%s' record %d to float32: '%s'.", filepath, idx, err)
 			return label, err
+		} else {
+			label.Value[idx] = float32(tmpfloat)
 		}
 	}
 
