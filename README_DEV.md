@@ -78,3 +78,29 @@ go tool cover -html=cover.out
 <!-- badges: end -->
 
 
+### Building under MS Windows
+
+This is not officially supported and we cannot help with any issues you encounter, but the installation of Go under Windows is straight-forward. There is an official installer on the golang website, just run it and you should be fine. If your path is setup correctly, you should be able to build in your clone of the repo:
+
+```shell
+go build cmd\\example_surface\\example_surface.go
+```
+
+The installer mentioned above will not install `make` though. While `make` is optional, it is definitely convenient to have it. If you are building stuff under Windows, chances are you already have conda installed. If so, it is easy to install `make` from MinGW using `conda`:
+
+```shell
+# activate your conda environment of choice first. Then:
+conda install -c conda-forge m2w64-make
+```
+
+Once you have it, you can build and run neuro demo apps using `make` as illustrated for Unix above, just remember that the binary that comes in the `m2w64-make` package is called `mingw32-make` and replace it in the commands:
+
+```shell
+mingw32-make
+```
+
+or
+
+```shell
+mingw32-make run_mgh
+```
