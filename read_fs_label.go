@@ -33,7 +33,7 @@ type FsLabel struct {
 // Returns:
 //  - is_part_of_label: a bool array of length meshNumVertices, where each element is true if the vertex is part of the label, and false otherwise.
 //  - error: an error if one occurred, e.g., the number of vertices in the mesh is less than the number of elements in the label.
-func vertexIsPartOfLabel(label FsLabel, meshNumVertices int32) ([]bool, error) {
+func VertexIsPartOfLabel(label FsLabel, meshNumVertices int32) ([]bool, error) {
 	if meshNumVertices  < int32(len(label.ElementIndex)) {
 		err := fmt.Errorf("vertexIsPartOfLabel: number of vertices in mesh (%d) is less than number of elements in label (%d), label invalid for this mesh.", meshNumVertices, len(label.ElementIndex))
 		return nil, err
