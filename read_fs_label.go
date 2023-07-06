@@ -24,6 +24,27 @@ type FsLabel struct {
 }
 
 
+// Check for all vertices in the mesh whether they are part of the label.
+//
+// Parameters:
+//  - label: the label to check
+//  - meshNumVertices: the number of vertices in the mesh
+//
+// Returns:
+//  - is_part_of_label: a bool array of length meshNumVertices, where each element is true if the vertex is part of the label, and false otherwise.
+//  - error: an error if one occurred, e.g., the number of vertices in the mesh is less than the number of elements in the label.
+func vertexIsPartOfLabel(label FsLabel, meshNumVertices int32) ([]bool, error) {
+	if meshNumVertices  < int32(len(label.ElementIndex)) {
+		err := fmt.Errorf("vertexIsPartOfLabel: number of vertices in mesh (%d) is less than number of elements in label (%d), label invalid for this mesh.", meshNumVertices, len(label.ElementIndex))
+		return nil, err
+	}
+	is_part_of_label := make([]bool, meshNumVertices)  // default value is false
+	for _, element_index := range label.ElementIndex {
+		is_part_of_label[element_index] = true
+	}
+	return is_part_of_label, nil
+}
+
 
 // Read an file in FreeSurfer label format.
 //
@@ -98,12 +119,22 @@ func ReadFsLabel(filepath string) (FsLabel, error) {
 
 	// Read the data and fill in the label struct.
 	for idx, record := range records {
-		if len(record) != 5 {
-			err = fmt.Errorf("readFsLabel: number of columns in label file '%s' record %d is %d, but should be 5.", filepath, idx, len(record))
+
+		// The FreeSurfer label files often contain double spaces, which the CSV reader does not like.
+		// So we remove all whitespace-fields from the record.
+		record_no_whitespace := make([]string, 0)
+		for _, field := range record {
+			if len(strings.TrimSpace(field)) > 0 {
+				record_no_whitespace = append(record_no_whitespace, field)
+			}
+		}
+
+		if len(record_no_whitespace) != 5 {
+			err = fmt.Errorf("readFsLabel: number of columns in label file '%s' record %d is %d, but should be 5: %s.", filepath, idx, len(record_no_whitespace), record_no_whitespace)
 			return label, err
 		}
 
-		tmpElementIndex, err = strconv.Atoi(record[0])
+		tmpElementIndex, err = strconv.Atoi(record_no_whitespace[0])
 		if err != nil {
 			err = fmt.Errorf("readFsLabel: could not convert element index in label file '%s' record %d to integer: '%s'.", filepath, idx, err)
 			return label, err
@@ -111,7 +142,7 @@ func ReadFsLabel(filepath string) (FsLabel, error) {
 			label.ElementIndex[idx] = int32(tmpElementIndex)
 		}
 
-		tmpfloat, err = strconv.ParseFloat(record[1], 32)
+		tmpfloat, err = strconv.ParseFloat(record_no_whitespace[1], 32)
 		if err != nil {
 			err = fmt.Errorf("readFsLabel: could not convert X coordinate in label file '%s' record %d to float32: '%s'.", filepath, idx, err)
 			return label, err
@@ -119,7 +150,7 @@ func ReadFsLabel(filepath string) (FsLabel, error) {
 			label.CoordX[idx] = float32(tmpfloat)
 		}
 
-		tmpfloat, err = strconv.ParseFloat(record[2], 32)
+		tmpfloat, err = strconv.ParseFloat(record_no_whitespace[2], 32)
 		if err != nil {
 			err = fmt.Errorf("readFsLabel: could not convert Y coordinate in label file '%s' record %d to float32: '%s'.", filepath, idx, err)
 			return label, err
@@ -127,7 +158,7 @@ func ReadFsLabel(filepath string) (FsLabel, error) {
 			label.CoordY[idx] = float32(tmpfloat)
 		}
 
-		tmpfloat, err = strconv.ParseFloat(record[3], 32)
+		tmpfloat, err = strconv.ParseFloat(record_no_whitespace[3], 32)
 		if err != nil {
 			err = fmt.Errorf("readFsLabel: could not convert Z coordinate in label file '%s' record %d to float32: '%s'.", filepath, idx, err)
 			return label, err
@@ -135,7 +166,7 @@ func ReadFsLabel(filepath string) (FsLabel, error) {
 			label.CoordZ[idx] = float32(tmpfloat)
 		}
 
-		tmpfloat, err = strconv.ParseFloat(record[4], 32)
+		tmpfloat, err = strconv.ParseFloat(record_no_whitespace[4], 32)
 		if err != nil {
 			err = fmt.Errorf("readFsLabel: could not convert value in label file '%s' record %d to float32: '%s'.", filepath, idx, err)
 			return label, err

@@ -72,20 +72,31 @@ func main() {
 	if len(exportfile_obj) > 0 {
 		fmt.Printf("%sExporting mesh in format %s to file '%s'.\n", apptag, "obj", exportfile_obj)
 		_, err = neuro.Export(mesh, exportfile_obj, "obj")
+		if err != nil {
+			fmt.Printf("%sError exporting mesh in OBJ: %s", apptag, err)
+		} else {
+			fmt.Printf("%sExported mesh to file '%s' in OBJ format.\n", apptag, exportfile_obj)
+		}
 	}
 	if len(exportfile_ply) > 0 {
 		fmt.Printf("%sExporting mesh in format %s to file '%s'.\n", apptag, "ply", exportfile_ply)
 		_, err = neuro.Export(mesh, exportfile_ply, "ply")
+		if err != nil {
+			fmt.Printf("%sError exporting mesh in PLY format: %s", apptag, err)
+		} else {
+			fmt.Printf("%sExported mesh to file '%s' in PLY format.\n", apptag, exportfile_ply)
+		}
 	}
 	if len(exportfile_stl) > 0 {
 		fmt.Printf("%sExporting mesh in format %s to file '%s'.\n", apptag, "stl", exportfile_stl)
 		_, err = neuro.Export(mesh, exportfile_stl, "stl")
+		if err != nil {
+			fmt.Printf("%sError exporting mesh in STL format: %s", apptag, err)
+		} else {
+			fmt.Printf("%sExported mesh to file '%s' in STL format.\n", apptag, exportfile_stl)
+		}
 	}
-	if err != nil {
-		fmt.Printf("%sError exporting mesh: %s", apptag, err)
-	} else {
-		fmt.Printf("%sExported mesh.\n", apptag)
-	}
+
 
 
 }
