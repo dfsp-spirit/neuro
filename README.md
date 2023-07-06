@@ -12,18 +12,20 @@ Go module for reading and writing structural neuroimaging file formats. Supports
 
 This repo contains a very early version of a [Go](https://go.dev/) module for reading structural neuroimaging file formats. Currently supported formats include:
 
-* [FreeSurfer](https://freesurfer.net) brain surface format: a triangular mesh file format. Used for recon-all output files like `<subject>/lh.white`
+* [FreeSurfer](https://freesurfer.net) brain surface format: a triangular mesh file format. Used for recon-all output files like `<subject>/surf/lh.white`.
     - Read file format (function `ReadFsSurface`) into `Mesh` data structure.
     - Export `Mesh` to PLY, STL, OBJ formats.
     - Computation of basic `Mesh` properties (vertex and face count, bounding box, average edge length, total surface area, ...).
-* FreeSurfer curv format: stores per-vertex data (also known as a brain overlay), e.g., cortical thickness at each vertex of the brain mesh. Typically used for native space data for a single subject, for recon-all output files like `<subject>/lh.thickness`.
+* FreeSurfer curv format: stores per-vertex data (also known as a brain overlay), e.g., cortical thickness at each vertex of the brain mesh. Typically used for native space data for a single subject, for recon-all output files like `<subject>/surf/lh.thickness`.
     - Read file format (function `ReadFsCurv`)
     - Write file format (function `WriteFsCurv`)
     - Export data to JSON format.
-* FreeSurfer MGH and MGZ formats: store 3-dimensional or 4-dimensional (subject/time dimension) magnetic resonance imaging (MRI) scans of the human brain (e.g., `<subject>/mri/brain.mgz). Can also be used to store per-vertex data, including multi-subject data on a common brain template like fsaverage. The MGZ format is just gzip-compressed MGH format.
+* FreeSurfer MGH and MGZ formats: store 3-dimensional or 4-dimensional (subject/time dimension) magnetic resonance imaging (MRI) scans of the human brain (e.g., `<subject>/mri/brain.mgz`). Can also be used to store per-vertex data, including multi-subject data on a common brain template like fsaverage (e.g., files like `<subject>/surf/lh.thickness.fwhm5.fsaverage.mgh`). The MGZ format is just gzip-compressed MGH format.
     - Read MGH format (function `ReadFsMgh`)
-    - Read MGZ format (function `ReadFsMgh`), without the need to manually decompress first.
+    - Read MGZ format (function `ReadFsMgh`), without the need to manually decompress first. The function handles both MGH and MGZ.
     - Full header information is available, so the image orientation can be reconstructed from the RAS information.
+* FreeSurfer label format: these files store labels, i.e., extra information for a subset of the vertices of a mesh or the voxels of a volume. Sometimes per-vertex or per-voxel data is stored in the labels data field, but in other case the relevant information is simply whether or not a certain element (voxel, vertex) is part of the label. Used for recon-all output files like `<subject>/label/lh.cortex.label`.
+    - Read ASCII label format (function `ReadFsLabel`, see also the related utility function `VertexIsPartOfLabel`)
 
 ![Vis](./lhwhite.jpg?raw=true "Visualization of the demo brain mesh.")
 
@@ -49,6 +51,7 @@ Demo applications that use `neuro` are available in the [cmd/](./cmd/) directory
 * A command line app that reads a FreeSurfer mesh and prints some mesh information, like total surface area, average edgle length, etc: [example_surface.go](./cmd/example_surface/example_surface.go)
 * A command line app that reads per-vertex cortical thickness data from a FreeSurfer curv file and exports it to a JSON file: [example_curv.go](./cmd/example_curv/example_curv.go)
 * A command line app that reads a three-dimensional human brain scan (MRI image) from a FreeSurfer MGH file and prints some header data and the value of a voxel: [example_mgh.go](./cmd/example_mgh/example_mgh.go)
+* A command line app that reads a label from a FreeSurfer surface label file and optionally exports the label data to JSON format: [example_label.go](./cmd/example_label/example_label.go)
 
 
 ## Developer information
