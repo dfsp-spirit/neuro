@@ -51,7 +51,7 @@ func main() {
 	}
 
 	if *verbosity > 0 {
-    	fmt.Printf("%sRead per-vertex data overlay for %d vertices from meshfile '%s'.\n", apptag, len(pervertex_data), curvfile)
+    	fmt.Printf("%sRead per-vertex data overlay for %d vertices from file '%s'.\n", apptag, len(pervertex_data), curvfile)
 	}
 
 
@@ -62,12 +62,11 @@ func main() {
 			fmt.Printf("%sError converting per-vertex data to JSON: %s", apptag, err)
 		}
 		err = ioutil.WriteFile(exportfile_json, file, 0644)
+		if err != nil {
+			fmt.Printf("%sError exporting per-vertex data: %s", apptag, err)
+		} else {
+			fmt.Printf("%sExported per-vertex data to file '%s'.\n", apptag, exportfile_json)
+		}
 	}
-	if err != nil {
-		fmt.Printf("%sError exporting per-vertex data: %s", apptag, err)
-	} else {
-		fmt.Printf("%sExported per-vertex data.\n", apptag)
-	}
-
 
 }

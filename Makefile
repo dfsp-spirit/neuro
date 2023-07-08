@@ -3,6 +3,7 @@ build:
 	go build -o bin/neuro_example_surface cmd/example_surface/example_surface.go
 	go build -o bin/neuro_example_curv cmd/example_curv/example_curv.go
 	go build -o bin/neuro_example_mgh cmd/example_mgh/example_mgh.go
+	go build -o bin/neuro_example_label cmd/example_label/example_label.go
 
 run:
 	go run cmd/example_surface/example_surface.go --meshfile testdata/lh.white --exportply lhwhite.ply --exportobj lhwhite.obj --exportstl lhwhite.stl
@@ -18,9 +19,13 @@ run_mgh:
 run_mgz:
 	go run cmd/example_mgh/example_mgh.go --mghfile testdata/brain.mgz --informat "auto"
 
+run_label:
+	go run cmd/example_label/example_label.go --labelfile testdata/lh.cortex.label
+
 run_all:
 	make run_surf
 	make run_curv
 	make run_mgh
+	make run_label
 
 all: build
