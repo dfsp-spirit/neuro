@@ -1,6 +1,13 @@
 neuro Changes
 =============
 
+v0.1.2 -- Support for reading Freesurfer label files
+----------------------------------------------------
+NEW:
+- Add support for reading labels, function `ReadFsLabel`.
+FIXED: none
+CHANGED: none
+
 
 v0.1.1 -- Improved docs and Mgh struct fix
 ------------------------------------------
