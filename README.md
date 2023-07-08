@@ -25,7 +25,8 @@ This repo contains a very early version of a [Go](https://go.dev/) module for re
     - Read MGZ format (function `ReadFsMgh`), without the need to manually decompress first. The function handles both MGH and MGZ.
     - Full header information is available, so the image orientation can be reconstructed from the RAS information.
 * FreeSurfer label format: these files store labels, i.e., extra information for a subset of the vertices of a mesh or the voxels of a volume. Sometimes per-vertex or per-voxel data is stored in the labels data field, but in other case the relevant information is simply whether or not a certain element (voxel, vertex) is part of the label. Used for recon-all output files like `<subject>/label/lh.cortex.label`.
-    - Read ASCII label format (function `ReadFsLabel`, see also the related utility function `VertexIsPartOfLabel`)
+    - Read ASCII label format (function `ReadFsLabel`)
+    - See also the related utility function `VertexIsPartOfLabel`
 
 ![Vis](./lhwhite.jpg?raw=true "Visualization of the demo brain mesh.")
 
