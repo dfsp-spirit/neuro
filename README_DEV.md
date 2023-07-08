@@ -77,4 +77,24 @@ go tool cover -html=cover.out
 [![Main branch on Github Actions](https://github.com/dfsp-spirit/neuro/actions/workflows/unittests.yml/badge.svg?branch=main)]
 <!-- badges: end -->
 
+### Contributing
+
+We are happy to accept contributions. To prevent wasted efforts, please get in touch by opening an issue and discussing things first before you start working on larger changes.
+
+We use the typical open source procedure:
+
+* for the repo to your Github account
+* checkout from your copy of the repo locally
+* change branch to develop, then create a new branch from there
+* commit your changes and tests into the local branch
+* push to your copy of the repo on Github
+* on the Github website, go to the new branch and create a pull request against the develop branch of my repo.
+* wait for the tests, and I will comment on the PR.
+* if everything is green, I will merge your changes into develop. before the next release, I will merge develop into main, and your changes will be available for everyone.
+
+
+
+### For maintainers: publishing a new package version
+
+The process is explained so well and short in the [official Go documentation on publishing a module](https://go.dev/doc/modules/publishing) that I couldn't condense it any further, just read it there.
 
