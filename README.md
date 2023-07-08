@@ -5,6 +5,7 @@ Go module for reading and writing structural neuroimaging file formats. Supports
 <!-- badges: start -->
 [![Main branch on Github Actions](https://github.com/dfsp-spirit/neuro/actions/workflows/unittests.yml/badge.svg?branch=main)](https://github.com/dfsp-spirit/neuro/actions/workflows/unittests.yml)
 [![GoDoc](https://godoc.org/github.com/dfsp-spirit/neuro?status.svg)](https://godoc.org/github.com/dfsp-spirit/neuro) [![license](https://img.shields.io/github/license/dfsp-spirit/neuro.svg)](https://github.com/dfsp-spirit/neuro/blob/main/LICENSE)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.8126957.svg)](https://doi.org/10.5281/zenodo.8126957)
 <!-- badges: end -->
 
 
