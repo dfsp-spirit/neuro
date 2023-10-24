@@ -1,6 +1,17 @@
 neuro Changes
 =============
 
+v0.1.3 -- Security release
+---------------------------
+This is a security release to fix the following security issue in a dependency:
+
+Dependency: golang.org/x/net dependency
+Vulnerable versions: < 0.13.0
+Upgrade to: 0.13.0
+Defined in: go.mod
+Vulnerabilities:  CVE-2023-3978 (Moderate severity)  CVE-2023-39325 (Moderate severity)  CVE-2023-44487 (Moderate severity)
+
+
 v0.1.2 -- Support for reading Freesurfer label files
 ----------------------------------------------------
 NEW:
