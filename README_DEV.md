@@ -93,6 +93,17 @@ We use the typical open source procedure:
 * if everything is green, I will merge your changes into develop. before the next release, I will merge develop into main, and your changes will be available for everyone.
 
 
+### Upgrading the pacakge versions of dependencies
+
+It is often required to update to later versions of dependencies that include fixes for security issues discovered in the respective packages. To do that:
+
+```shell
+go get -t -u ./...        # to update go.mod and go.sum with latest versions
+go test                   # run our unit tests to ensure everything still works
+```
+
+If everything works, push the change to Github. Also publish a new release, as explained below.
+
 
 ### For maintainers: publishing a new package version
 
