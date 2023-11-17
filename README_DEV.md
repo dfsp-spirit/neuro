@@ -125,7 +125,9 @@ The installer mentioned above will not install `make` though. While `make` is op
 conda install -c conda-forge m2w64-make
 ```
 
-Once you have it, you can build and run neuro demo apps using `make` as illustrated for Unix above, just remember that the binary that comes in the `m2w64-make` package is called `mingw32-make` and replace it in the commands:
+Alternatively, you could install the chocolatey package manager for Windows, and use it to install GNU make via `choco install make`.
+
+Once you have make installed one way or the other, you can build and run neuro demo apps using `make` as illustrated for Unix above. In case you installed the MINGW make, just remember that the binary that comes in the `m2w64-make` package is called `mingw32-make` and replace it accordingly in the commands:
 
 ```shell
 mingw32-make
