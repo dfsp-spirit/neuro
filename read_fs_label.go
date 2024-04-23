@@ -35,7 +35,7 @@ type FsLabel struct {
 //  - error: an error if one occurred, e.g., the number of vertices in the mesh is less than the number of elements in the label.
 func VertexIsPartOfLabel(label FsLabel, meshNumVertices int32) ([]bool, error) {
 	if meshNumVertices  < int32(len(label.ElementIndex)) {
-		err := fmt.Errorf("vertexIsPartOfLabel: number of vertices in mesh (%d) is less than number of elements in label (%d), label invalid for this mesh.", meshNumVertices, len(label.ElementIndex))
+		err := fmt.Errorf("vertexIsPartOfLabel: number of vertices in mesh (%d) is less than number of elements in label (%d), label invalid for this mesh. ", meshNumVertices, len(label.ElementIndex))
 		return nil, err
 	}
 	is_part_of_label := make([]bool, meshNumVertices)  // default value is false
@@ -71,18 +71,18 @@ func ReadFsLabel(filepath string) (FsLabel, error) {
 		return label, err
 	}
 	if len(lines) <= 2 {
-		err = fmt.Errorf("readFsLabel: label file '%s' contains %d lines, but at least 3 required.", filepath, len(lines))
+		err = fmt.Errorf("readFsLabel: label file '%s' contains %d lines, but at least 3 required. ", filepath, len(lines))
 		return label, err
 	}
 
 	// Get header field for number of elements in label and check it versus data in file.
 	num_rows, err := strconv.Atoi(strings.TrimSpace(lines[1]))
     if err != nil {
-		err = fmt.Errorf("readFsLabel: could not convert number of rows (from line 2) in label file '%s' to integer: '%s'.", filepath, err)
+		err = fmt.Errorf("readFsLabel: could not convert number of rows (from line 2) in label file '%s' to integer: '%s'", filepath, err)
 		return label, err
     }
 	if num_rows != len(lines) -2 {
-		err = fmt.Errorf("readFsLabel: number of rows (from line 2) in label file '%s' is %d, but number of lines is %d.", filepath, num_rows, len(lines))
+		err = fmt.Errorf("readFsLabel: number of rows (from line 2) in label file '%s' is %d, but number of lines is %d. ", filepath, num_rows, len(lines))
 		return label, err
 	}
 
@@ -103,7 +103,7 @@ func ReadFsLabel(filepath string) (FsLabel, error) {
 
 	// Make sure the actual number of records is correct (no comments or empty lines in combination with less records).
 	if len(records) != num_rows {
-		err = fmt.Errorf("readFsLabel: number of rows (from line 2) in label file '%s' is %d, but number of records is %d.", filepath, num_rows, len(records))
+		err = fmt.Errorf("readFsLabel: number of rows (from line 2) in label file '%s' is %d, but number of records is %d. ", filepath, num_rows, len(records))
 		return label, err
 	}
 
@@ -114,7 +114,7 @@ func ReadFsLabel(filepath string) (FsLabel, error) {
 	label.CoordZ = make([]float32, num_rows)
 	label.Value = make([]float32, num_rows)
 
-	var tmpElementIndex int
+	var tmpElementIndex int64
 	var tmpfloat float64
 
 	// Read the data and fill in the label struct.
@@ -130,13 +130,15 @@ func ReadFsLabel(filepath string) (FsLabel, error) {
 		}
 
 		if len(record_no_whitespace) != 5 {
-			err = fmt.Errorf("readFsLabel: number of columns in label file '%s' record %d is %d, but should be 5: %s.", filepath, idx, len(record_no_whitespace), record_no_whitespace)
+			err = fmt.Errorf("readFsLabel: number of columns in label file '%s' record %d is %d, but should be 5: %s", filepath, idx, len(record_no_whitespace), record_no_whitespace)
 			return label, err
 		}
 
-		tmpElementIndex, err = strconv.Atoi(record_no_whitespace[0])
+		//tmpElementIndex, err = strconv.Atoi(record_no_whitespace[0])
+		tmpElementIndex, err = strconv.ParseInt(record_no_whitespace[0], 10, 32)
+
 		if err != nil {
-			err = fmt.Errorf("readFsLabel: could not convert element index in label file '%s' record %d to integer: '%s'.", filepath, idx, err)
+			err = fmt.Errorf("readFsLabel: could not convert element index in label file '%s' record %d to integer: '%s'", filepath, idx, err)
 			return label, err
 		} else {
 			label.ElementIndex[idx] = int32(tmpElementIndex)
@@ -144,7 +146,7 @@ func ReadFsLabel(filepath string) (FsLabel, error) {
 
 		tmpfloat, err = strconv.ParseFloat(record_no_whitespace[1], 32)
 		if err != nil {
-			err = fmt.Errorf("readFsLabel: could not convert X coordinate in label file '%s' record %d to float32: '%s'.", filepath, idx, err)
+			err = fmt.Errorf("readFsLabel: could not convert X coordinate in label file '%s' record %d to float32: '%s'", filepath, idx, err)
 			return label, err
 		} else {
 			label.CoordX[idx] = float32(tmpfloat)
@@ -152,7 +154,7 @@ func ReadFsLabel(filepath string) (FsLabel, error) {
 
 		tmpfloat, err = strconv.ParseFloat(record_no_whitespace[2], 32)
 		if err != nil {
-			err = fmt.Errorf("readFsLabel: could not convert Y coordinate in label file '%s' record %d to float32: '%s'.", filepath, idx, err)
+			err = fmt.Errorf("readFsLabel: could not convert Y coordinate in label file '%s' record %d to float32: '%s'", filepath, idx, err)
 			return label, err
 		} else {
 			label.CoordY[idx] = float32(tmpfloat)
@@ -160,7 +162,7 @@ func ReadFsLabel(filepath string) (FsLabel, error) {
 
 		tmpfloat, err = strconv.ParseFloat(record_no_whitespace[3], 32)
 		if err != nil {
-			err = fmt.Errorf("readFsLabel: could not convert Z coordinate in label file '%s' record %d to float32: '%s'.", filepath, idx, err)
+			err = fmt.Errorf("readFsLabel: could not convert Z coordinate in label file '%s' record %d to float32: '%s'", filepath, idx, err)
 			return label, err
 		} else {
 			label.CoordZ[idx] = float32(tmpfloat)
@@ -168,7 +170,7 @@ func ReadFsLabel(filepath string) (FsLabel, error) {
 
 		tmpfloat, err = strconv.ParseFloat(record_no_whitespace[4], 32)
 		if err != nil {
-			err = fmt.Errorf("readFsLabel: could not convert value in label file '%s' record %d to float32: '%s'.", filepath, idx, err)
+			err = fmt.Errorf("readFsLabel: could not convert value in label file '%s' record %d to float32: '%s'", filepath, idx, err)
 			return label, err
 		} else {
 			label.Value[idx] = float32(tmpfloat)
