@@ -35,6 +35,10 @@ This repo contains a very early version of a [Go](https://go.dev/) module for re
     - Read annotation format including the color table (function `ReadFsAnnot`) into the `Annot` data structure.
     - Write annotation format (function `WriteFsAnnot`), e.g., to export modified parcellations.
     - Convenience methods of the `Annot` and `Colortable` data structures, e.g., per-vertex colors (`Annot.VertexColors`), region names per vertex (`Annot.VertexRegionNames`), and the vertices of a region (`Annot.RegionVerticesByName`).
+* [NIfTI-1](https://nifti.nimh.nih.gov/nifti-1) format: a widely used file format for storing brain volumes, commonly produced by MRI scanners and neuroimaging tools. The NIfTI-1 header stores the voxel dimensions and the spatial transform (as an affine sform and/or a quaternion-based qform) from voxel to scanner (RAS) coordinates.
+    - Read NIfTI-1 files (function `ReadNifti`) into the `Nifti` data structure. Single-file format (magic `n+1`, file extension `.nii`) and gzipped files (`.nii.gz`) are supported. Note that only standard-conformant NIfTI-1 files are supported; the so-called "FreeSurfer hack" for non-conformant NIfTI-1 files is not supported.
+    - Write NIfTI-1 files (function `WriteNifti`), including gzipped `.nii.gz` output.
+    - Convert between the MGH and NIfTI representations (functions `MghToNifti` and `NiftiToMgh`). The MGH to NIfTI conversion computes the NIfTI sform and qform properly from the MGH vox2ras matrix (the `Mdc` and `Pxyz_c` header fields), following the NIfTI-1 standard algorithm. This makes it easy to convert MGH/MGZ volumes to NIfTI files.
 
 ![Vis](./lhwhite.jpg?raw=true "Visualization of the demo brain mesh.")
 

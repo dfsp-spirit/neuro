@@ -93,7 +93,7 @@ We use the typical open source procedure:
 * if everything is green, I will merge your changes into develop. before the next release, I will merge develop into main, and your changes will be available for everyone.
 
 
-### Upgrading the pacakge versions of dependencies
+### Upgrading the package versions of dependencies
 
 It is often required to update to later versions of dependencies that include fixes for security issues discovered in the respective packages. To do that:
 

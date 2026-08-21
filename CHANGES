@@ -1,6 +1,17 @@
 neuro Changes
 =============
 
+v0.3.0 -- NIfTI-1 read/write support and MGH to NIfTI conversion
+----------------------------------------------------------------
+NEW:
+- Add support for reading and writing NIfTI-1 files (single-file format, magic 'n+1'), functions `ReadNifti` and `WriteNifti`. Supported data types: uint8, int16, int32, float32. Gzipped files (.nii.gz) are supported for both reading and writing.
+- Add the new `Nifti1Header`, `NiftiData`, and `Nifti` data structures for accessing NIfTI-1 files.
+- Add support for converting between the MGH and NIfTI representations, functions `MghToNifti` and `NiftiToMgh`. The conversion computes the NIfTI sform and qform properly from the MGH vox2ras matrix (Mdc and Pxyz_c header fields), following the NIfTI-1 standard algorithm. This allows converting MGH/MGZ volumes to NIfTI files.
+- Note: only standard-conformant NIfTI-1 files are supported. The so-called "FreeSurfer hack" for non-conformant NIfTI-1 files is not supported.
+
+FIXED: none
+CHANGED: none
+
 v0.2.0 -- Writing support and FreeSurfer annotation (parcellation) support
 --------------------------------------------------------------------------
 NEW:
