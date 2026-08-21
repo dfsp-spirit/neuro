@@ -1,6 +1,12 @@
 neuro Changes
 =============
 
+
+v0.3.1 -- Update deps
+-----------------------
+- NEW: update dependecies only
+
+
 v0.3.0 -- NIfTI-1 read/write support and MGH to NIfTI conversion
 ----------------------------------------------------------------
 NEW:
