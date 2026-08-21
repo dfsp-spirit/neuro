@@ -10,47 +10,47 @@ import (
 
 // curvStruct is a struct representing a FreeSurfer curv file.
 type curvStruct struct {
-	MagicB1 uint8
-	MagicB2 uint8
-	MagicB3 uint8
-	NumVertices int32
-	NumFaces int32
+	MagicB1            uint8
+	MagicB2            uint8
+	MagicB3            uint8
+	NumVertices        int32
+	NumFaces           int32
 	NumValuesPerVertex int32
-	Data []float32
+	Data               []float32
 }
 
 // curvHeaderStruct is a struct representing a FreeSurfer curv file header, without the data.
 type curvHeaderStruct struct {
-	MagicB1 uint8
-	MagicB2 uint8
-	MagicB3 uint8
-	NumVertices int32
-	NumFaces int32
+	MagicB1            uint8
+	MagicB2            uint8
+	MagicB3            uint8
+	NumVertices        int32
+	NumFaces           int32
 	NumValuesPerVertex int32
 }
 
 // getCurvStruct wraps a CurvStruct around a slice of float32 values.
-func getCurvStruct(data[]float32) curvStruct {
+func getCurvStruct(data []float32) curvStruct {
 	curv := curvStruct{
-		MagicB1: 255,
-		MagicB2: 255,
-		MagicB3: 255,
-		NumVertices: int32(len(data)),
-		NumFaces: 0,
+		MagicB1:            255,
+		MagicB2:            255,
+		MagicB3:            255,
+		NumVertices:        int32(len(data)),
+		NumFaces:           0,
 		NumValuesPerVertex: 1,
-		Data: data,
+		Data:               data,
 	}
 	return curv
 }
 
 // getCurvHeaderStructForData creates a CurvStruct around a slice of float32 values.
-func getCurvHeaderStruct(data[]float32) curvHeaderStruct {
+func getCurvHeaderStruct(data []float32) curvHeaderStruct {
 	curvHdr := curvHeaderStruct{
-		MagicB1: 255,
-		MagicB2: 255,
-		MagicB3: 255,
-		NumVertices: int32(len(data)),
-		NumFaces: 0,
+		MagicB1:            255,
+		MagicB2:            255,
+		MagicB3:            255,
+		NumVertices:        int32(len(data)),
+		NumFaces:           0,
 		NumValuesPerVertex: 1,
 	}
 	return curvHdr
@@ -64,17 +64,17 @@ func float32ToByte(f float32) []byte {
 	var buf [4]byte
 	endian.PutUint32(buf[:], math.Float32bits(f))
 	return buf[:]
- }
+}
 
 // WriteFsCurv writes a FreeSurfer curv file.
 //
 // Parameters:
-//  - filename: the name of the file to write. Path to it must exist.
-//  - data: the slice of float32 values. Must not be empty.
+//   - filename: the name of the file to write. Path to it must exist.
+//   - data: the slice of float32 values. Must not be empty.
 //
 // Returns:
-//  - error: an error if one occurred, e.g., the slice was empty. Or nil otherwise.
-func WriteFsCurv(filename string, data[]float32) error {
+//   - error: an error if one occurred, e.g., the slice was empty. Or nil otherwise.
+func WriteFsCurv(filename string, data []float32) error {
 
 	file, err := os.Create(filename)
 	defer file.Close()
@@ -91,9 +91,9 @@ func WriteFsCurv(filename string, data[]float32) error {
 	}
 
 	err = binary.Write(file, binary.BigEndian, &curvHdr)
-    if err != nil {
-        return err
-    }
+	if err != nil {
+		return err
+	}
 
 	writer := bufio.NewWriter(file)
 

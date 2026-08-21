@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestReadFsLabel(t *testing.T){
+func TestReadFsLabel(t *testing.T) {
 	var labelFile string = "testdata/lh.cortex.label"
 
 	// Read the label file
@@ -21,7 +21,7 @@ func TestReadFsLabel(t *testing.T){
 	}
 }
 
-func TestVertexIsPartOfLabel(t *testing.T){
+func TestVertexIsPartOfLabel(t *testing.T) {
 	var labelFile string = "testdata/lh.cortex.label"
 
 	// Read the label file

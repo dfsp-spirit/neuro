@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestReadFsCurv(t *testing.T){
+func TestReadFsCurv(t *testing.T) {
 	var curvFile string = "testdata/lh.thickness"
 
 	// Read the curv file

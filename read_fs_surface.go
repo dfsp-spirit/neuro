@@ -15,13 +15,13 @@ import (
 // Read a newline-terminated string from a bytes.Reader.
 //
 // Parameters:
-//  - r: a bytes.Reader
-//  - endian: the byte order, e.g. binary.BigEndian
-//  - do_strip_newline: if true, strip the newline character from the end of the string
+//   - r: a bytes.Reader
+//   - endian: the byte order, e.g. binary.BigEndian
+//   - do_strip_newline: if true, strip the newline character from the end of the string
 //
 // Returns:
-//  - string: the string
-//  - error: an error if one occurred
+//   - string: the string
+//   - error: an error if one occurred
 func readNewlineTerminatedString(r *bytes.Reader, endian binary.ByteOrder, do_strip_newline bool) (string, error) {
 
 	//endian = binary.BigEndian // TODO: make this a parameter
@@ -44,17 +44,16 @@ func readNewlineTerminatedString(r *bytes.Reader, endian binary.ByteOrder, do_st
 	return line, nil
 }
 
-
 // ReadFsSurface reads a FreeSurfer surface file and returns a Mesh struct.
 //
 // A surface file is a binary file containing the reconstructed surface of a brain hemisphere.
 //
 // Parameters:
-//  - filepath: path to the FreeSurfer mesh file, e.g. '<subject>/surf/lh.white'
+//   - filepath: path to the FreeSurfer mesh file, e.g. '<subject>/surf/lh.white'
 //
 // Returns:
-//  - Mesh: a Mesh struct containing the mesh data
-//  - error: an error if one occurred
+//   - Mesh: a Mesh struct containing the mesh data
+//   - error: an error if one occurred
 func ReadFsSurface(filepath string) (Mesh, error) {
 
 	endian := binary.BigEndian
@@ -67,23 +66,23 @@ func ReadFsSurface(filepath string) (Mesh, error) {
 
 	file, err := os.Open(filepath)
 	if err != nil {
-   		panic(err)
+		panic(err)
 	}
 	defer file.Close()
 
 	// Get the file size
 	stat, err := file.Stat()
 	if err != nil {
-	   fmt.Println(err)
-	   return surface, err
+		fmt.Println(err)
+		return surface, err
 	}
 
 	// Read the file into a byte slice
 	bs := make([]byte, stat.Size())
 	_, err = bufio.NewReader(file).Read(bs)
 	if err != nil && err != io.EOF {
-	   fmt.Println(err)
-	   return surface, err
+		fmt.Println(err)
+		return surface, err
 	}
 
 	// Read the byte slice
@@ -97,25 +96,22 @@ func ReadFsSurface(filepath string) (Mesh, error) {
 
 	hdr1 := header_part1{}
 
-
 	if err := binary.Read(r, endian, &hdr1); err != nil {
 		fmt.Println("binary.Read failed on first part of fs surface header:", err)
 		return surface, err
 	}
 
-
-	if ! (hdr1.MagicB1 == 255 && hdr1.MagicB2 == 255 && hdr1.MagicB3 == 254) {
+	if !(hdr1.MagicB1 == 255 && hdr1.MagicB2 == 255 && hdr1.MagicB3 == 254) {
 		fmt.Println("Error: surface magic bytes are not 255 255 254, this is not a FreeSurfer surface file. Provide a recon-all output file like '<subject>/surf/lh.white'.")
 		return surface, err
 	}
-
 
 	if Verbosity > 0 {
 		fmt.Printf("Surface header magic bytes: %d %d %d.\n", hdr1.MagicB1, hdr1.MagicB2, hdr1.MagicB3)
 	}
 
-	createdLine, err := readNewlineTerminatedString(r, endian, true);
-    commentLine, err := readNewlineTerminatedString(r, endian, true);
+	createdLine, err := readNewlineTerminatedString(r, endian, true)
+	commentLine, err := readNewlineTerminatedString(r, endian, true)
 
 	if Verbosity > 0 {
 		fmt.Printf("createdLine: '%s'\n", createdLine)
@@ -140,8 +136,8 @@ func ReadFsSurface(filepath string) (Mesh, error) {
 	}
 
 	// read mesh data
-	surface.Vertices = make([]float32, hdr2.NumVerts * 3) // x,y,z coordinates for each vertex
-	surface.Faces = make([]int32, hdr2.NumFaces * 3)  // vertex 1, 2, 3 for each face
+	surface.Vertices = make([]float32, hdr2.NumVerts*3) // x,y,z coordinates for each vertex
+	surface.Faces = make([]int32, hdr2.NumFaces*3)      // vertex 1, 2, 3 for each face
 
 	// read vertices
 	if err := binary.Read(r, endian, &surface.Vertices); err != nil {

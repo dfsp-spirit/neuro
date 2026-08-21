@@ -17,45 +17,43 @@ import (
 // and the per-element data stored is not relevant (and typically set to 0.0).
 type FsLabel struct {
 	ElementIndex []int32   // The index of the vertex or voxel in the volume or mesh. The first element is 0.
-	CoordX   []float32   // The first coordinate of the vertex or voxel in the volume or mesh.
-	CoordY   []float32   // The first coordinate of the vertex or voxel in the volume or mesh.
-	CoordZ   []float32   // The first coordinate of the vertex or voxel in the volume or mesh.
-	Value []float32 // The per-element data.
+	CoordX       []float32 // The first coordinate of the vertex or voxel in the volume or mesh.
+	CoordY       []float32 // The first coordinate of the vertex or voxel in the volume or mesh.
+	CoordZ       []float32 // The first coordinate of the vertex or voxel in the volume or mesh.
+	Value        []float32 // The per-element data.
 }
-
 
 // Check for all vertices in the mesh whether they are part of the label.
 //
 // Parameters:
-//  - label: the label to check
-//  - meshNumVertices: the number of vertices in the mesh
+//   - label: the label to check
+//   - meshNumVertices: the number of vertices in the mesh
 //
 // Returns:
-//  - is_part_of_label: a bool array of length meshNumVertices, where each element is true if the vertex is part of the label, and false otherwise.
-//  - error: an error if one occurred, e.g., the number of vertices in the mesh is less than the number of elements in the label.
+//   - is_part_of_label: a bool array of length meshNumVertices, where each element is true if the vertex is part of the label, and false otherwise.
+//   - error: an error if one occurred, e.g., the number of vertices in the mesh is less than the number of elements in the label.
 func VertexIsPartOfLabel(label FsLabel, meshNumVertices int32) ([]bool, error) {
-	if meshNumVertices  < int32(len(label.ElementIndex)) {
+	if meshNumVertices < int32(len(label.ElementIndex)) {
 		err := fmt.Errorf("vertexIsPartOfLabel: number of vertices in mesh (%d) is less than number of elements in label (%d), label invalid for this mesh. ", meshNumVertices, len(label.ElementIndex))
 		return nil, err
 	}
-	is_part_of_label := make([]bool, meshNumVertices)  // default value is false
+	is_part_of_label := make([]bool, meshNumVertices) // default value is false
 	for _, element_index := range label.ElementIndex {
 		is_part_of_label[element_index] = true
 	}
 	return is_part_of_label, nil
 }
 
-
 // Read an file in FreeSurfer label format.
 //
 // A label file is a text file representing vertices or voxels in a label. A label contains information on a subset of the voxels or vertices only, i.e., the number of entries is typically less than the number of voxels or vertices in the volume or mesh. Sometimes per-vertex or per-voxel data is stored in the labels data field, but sometimes the real information is whether or not a certain element (voxel, vertex) is part of the label (e.g., for a cortex label), and the per-element data stored is not relevant.
 //
 // Parameters:
-//  - filepath: the path to the file, must be a FreeSurfer label file from recon-all output, like subject/label/lh.cortex.label.
+//   - filepath: the path to the file, must be a FreeSurfer label file from recon-all output, like subject/label/lh.cortex.label.
 //
 // Returns:
-//  - pervertex_data: float32 array of per-vertex descriptor values (e.g. cortical thickness)
-//  - error: an error if one occurred
+//   - pervertex_data: float32 array of per-vertex descriptor values (e.g. cortical thickness)
+//   - error: an error if one occurred
 func ReadFsLabel(filepath string) (FsLabel, error) {
 
 	var label FsLabel
@@ -77,11 +75,11 @@ func ReadFsLabel(filepath string) (FsLabel, error) {
 
 	// Get header field for number of elements in label and check it versus data in file.
 	num_rows, err := strconv.Atoi(strings.TrimSpace(lines[1]))
-    if err != nil {
+	if err != nil {
 		err = fmt.Errorf("readFsLabel: could not convert number of rows (from line 2) in label file '%s' to integer: '%s'", filepath, err)
 		return label, err
-    }
-	if num_rows != len(lines) -2 {
+	}
+	if num_rows != len(lines)-2 {
 		err = fmt.Errorf("readFsLabel: number of rows (from line 2) in label file '%s' is %d, but number of lines is %d. ", filepath, num_rows, len(lines))
 		return label, err
 	}

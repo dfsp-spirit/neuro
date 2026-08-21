@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestReadFsSurface(t *testing.T){
+func TestReadFsSurface(t *testing.T) {
 	var surfFile string = "testdata/lh.white"
 
 	// Read the surface file
