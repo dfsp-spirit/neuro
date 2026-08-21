@@ -4,11 +4,12 @@
 // brain anatomy. Currently it provides functions to access
 // fileformats used by FreeSurfer and some related neuroimaging software packages.
 //
-// The package can read three-dimensional (3D) and 4D brain scans in MGH and MGZ format,
-// typically produced from the raw DICOM files that are written by magnetic resonance imaging
-// (MRI) hardware. Support for reading brain surface reconstructions (cortical meshes)
-// and the related per-vertex data (like cortical thickness or sulcal depth at each point of the brain surface)
-// are also included.
+// The package can read and write three-dimensional (3D) and 4D brain scans in MGH and MGZ
+// format, typically produced from the raw DICOM files that are written by magnetic resonance
+// imaging (MRI) hardware. Support for reading and writing brain surface reconstructions
+// (cortical meshes), the related per-vertex data (like cortical thickness or sulcal depth
+// at each point of the brain surface), labels, and brain surface parcellations (annotations
+// with color tables) are also included.
 package neuro
 
 // Verbosity is the verbosity level of the package. 0 = silent, 1 = info, 2 = debug.

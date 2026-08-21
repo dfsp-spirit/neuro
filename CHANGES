@@ -1,6 +1,18 @@
 neuro Changes
 =============
 
+v0.2.0 -- Writing support and FreeSurfer annotation (parcellation) support
+--------------------------------------------------------------------------
+NEW:
+- Add support for writing FreeSurfer surface files, function `WriteFsSurface`. This allows roundtrip support for the surface format.
+- Add support for writing FreeSurfer MGH and MGZ files, function `WriteFsMgh`. The MGZ format is just gzip-compressed MGH format.
+- Add support for writing FreeSurfer ASCII label files, function `WriteFsLabel`. This allows roundtrip support for the label format.
+- Add support for reading and writing FreeSurfer annotation files (brain surface parcellations), functions `ReadFsAnnot` and `WriteFsAnnot`. This includes support for the color table and the Desikan-Killiany atlas (e.g., file `label/lh.aparc.annot`).
+- The new `Annot` and `Colortable` data structures come with convenience methods, including `Annot.VertexColors` (per-vertex RGB(A) colors), `Annot.VertexRegionNames`, `Annot.VertexRegions`, `Annot.RegionVerticesByName`, and `Annot.RegionVerticesByLabel`.
+
+FIXED: none
+CHANGED: none
+
 v0.1.3 -- Security release
 ---------------------------
 This is a security release to fix the following security issue in a dependency:

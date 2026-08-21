@@ -15,6 +15,7 @@ This repo contains a very early version of a [Go](https://go.dev/) module for re
 
 * [FreeSurfer](https://freesurfer.net) brain surface format: a triangular mesh file format. Used for recon-all output files like `<subject>/surf/lh.white`.
     - Read file format (function `ReadFsSurface`) into `Mesh` data structure.
+    - Write file format (function `WriteFsSurface`), e.g., to export modified meshes.
     - Export `Mesh` to PLY, STL, OBJ formats.
     - Computation of basic `Mesh` properties (vertex and face count, bounding box, average edge length, total surface area, ...).
 * FreeSurfer curv format: stores per-vertex data (also known as a brain overlay), e.g., cortical thickness at each vertex of the brain mesh. Typically used for native space data for a single subject, for recon-all output files like `<subject>/surf/lh.thickness`.
@@ -24,10 +25,16 @@ This repo contains a very early version of a [Go](https://go.dev/) module for re
 * FreeSurfer MGH and MGZ formats: store 3-dimensional or 4-dimensional (subject/time dimension) magnetic resonance imaging (MRI) scans of the human brain (e.g., `<subject>/mri/brain.mgz`). Can also be used to store per-vertex data, including multi-subject data on a common brain template like fsaverage (e.g., files like `<subject>/surf/lh.thickness.fwhm5.fsaverage.mgh`). The MGZ format is just gzip-compressed MGH format.
     - Read MGH format (function `ReadFsMgh`)
     - Read MGZ format (function `ReadFsMgh`), without the need to manually decompress first. The function handles both MGH and MGZ.
+    - Write MGH and MGZ formats (function `WriteFsMgh`)
     - Full header information is available, so the image orientation can be reconstructed from the RAS information.
 * FreeSurfer label format: these files store labels, i.e., extra information for a subset of the vertices of a mesh or the voxels of a volume. Sometimes per-vertex or per-voxel data is stored in the labels data field, but in other case the relevant information is simply whether or not a certain element (voxel, vertex) is part of the label. Used for recon-all output files like `<subject>/label/lh.cortex.label`.
     - Read ASCII label format (function `ReadFsLabel`)
+    - Write ASCII label format (function `WriteFsLabel`)
     - See also the related utility function `VertexIsPartOfLabel`
+* FreeSurfer annotation format (brain surface parcellations): these files assign to each vertex of a brain surface a region (like a brain atlas), e.g., the Desikan-Killiany atlas (file `<subject>/label/lh.aparc.annot`) or the Destrieux atlas (file `<subject>/label/lh.aparc.a2009s.annot`). They contain a color table defining the regions (region name and visualization color).
+    - Read annotation format including the color table (function `ReadFsAnnot`) into the `Annot` data structure.
+    - Write annotation format (function `WriteFsAnnot`), e.g., to export modified parcellations.
+    - Convenience methods of the `Annot` and `Colortable` data structures, e.g., per-vertex colors (`Annot.VertexColors`), region names per vertex (`Annot.VertexRegionNames`), and the vertices of a region (`Annot.RegionVerticesByName`).
 
 ![Vis](./lhwhite.jpg?raw=true "Visualization of the demo brain mesh.")
 
